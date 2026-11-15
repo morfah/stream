@@ -74,7 +74,8 @@ try
     report.Add("Games", [
         $"{finished.Count(g => g.Vods.Count > 0)} of {finished.Count} finished games have VODs.",
         $"{onSite.Count(g => g.IsOn(GameList.Unfinished))} unfinished and {onSite.Count(g => g.IsOn(GameList.Multiplayer))} multiplayer games, " +
-            $"{onSite.Count(g => g.Found is not null)} of them found on Twitch from the VOD titles. They're on {ReviewPage.File}.",
+            $"{onSite.Count(g => g.Found is not null)} of them found on Twitch from the VOD titles. They're on {ReviewPage.File}. " +
+            $"{onSite.Count(g => g.IsOn(GameList.Other))} other streams, like IRL.",
         $"{vods.Count(v => links.GamesByVod[v.Id].Count > 0)} of {vods.Count} VODs have a game, {links.Fixed.Count} of them fixed by hand. The rest are on {ReviewPage.File}.",
     ]);
 
@@ -82,6 +83,7 @@ try
     await WritePageAsync(FinishedPage.File, FinishedPage.Render(data.FinishedGames, games.ToDictionary(g => g.Key), updated));
     await WritePageAsync(PlayedPage.UnfinishedFile, PlayedPage.Render(GameList.Unfinished, onSite, updated));
     await WritePageAsync(PlayedPage.MultiplayerFile, PlayedPage.Render(GameList.Multiplayer, onSite, updated));
+    await WritePageAsync(PlayedPage.OtherFile, PlayedPage.Render(GameList.Other, onSite, updated));
     await WritePageAsync(VodsPage.File, VodsPage.Render(vods, onSite, updated));
     await WritePageAsync(ReviewPage.File, ReviewPage.Render(games, vods, links, updated));
     foreach (var game in onSite)

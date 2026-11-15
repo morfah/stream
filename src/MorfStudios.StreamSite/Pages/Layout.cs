@@ -30,6 +30,7 @@ public static class Layout
         ("./", "Finished"),
         (PlayedPage.UnfinishedFile, "Unfinished"),
         (PlayedPage.MultiplayerFile, "Multiplayer"),
+        (PlayedPage.OtherFile, "Other"),
         (VodsPage.File, "VOD archive"),
     ];
 

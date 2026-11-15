@@ -1,6 +1,6 @@
 # Morfah's stream site
 
-The games I've finished on stream, the ones I haven't finished yet, multiplayer games, each with its own page of VODs, and every VOD from my YouTube VOD channel: https://morfah.github.io/stream/
+The games I've finished on stream, the ones I haven't finished yet, multiplayer games and other streams like game dev and IRL, each with its own page of VODs, and every VOD from my YouTube VOD channel: https://morfah.github.io/stream/
 
 A C# program builds the pages from the files in `data`, my VODs on YouTube and game covers from Twitch. GitHub Actions publishes them to GitHub Pages on every push and once a day, so new VODs show up by themselves.
 
@@ -22,6 +22,7 @@ Edit these by hand, on GitHub or on my PC. A mistake in a file stops the build a
   - `aliases`: other names my VOD titles use for the game, like `["Silksong"]` for Hollow Knight: Silksong.
   - `multiplayer`: `true` for a game without an ending, like Apex Legends. It's on Multiplayer instead of Unfinished. One I'm done with, like Splitgate, goes in the finished list too, and is on both Finished and Multiplayer.
   - `hidden`: `true` for a game I don't want listed. It's not on Unfinished or Multiplayer and has no page, but its VODs stay in the archive.
+  - `category`: `true` for a kind of stream that isn't a game, like `Software and Game Development` or `IRL`. It has a page like a game, listed on Other instead of Unfinished. Its VODs come from `data/vod-fixes.json` or other names.
 - `data/not-games.json`: pieces of VOD titles that have a Twitch category's name but aren't a game I played, like `"Birthday"` in `Birthday 🥳 | Learning Quake speedrunning`.
 - `data/vod-fixes.json`: VODs whose titles don't name their games, or name the wrong ones. A VOD's ID and the games it really has, which replaces what its title gives. `[]` means no game:
   ```json

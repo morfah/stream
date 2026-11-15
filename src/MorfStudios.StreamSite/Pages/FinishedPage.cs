@@ -45,7 +45,7 @@ public static class FinishedPage
             body.Append(GameCards.Year(year, games.Where(g => g.Year == year).Select(g => Card(g, pages[Names.Key(g.Name)])).ToList()));
         body.Append($"""
                 </div>
-            {GameCards.Empty}
+            {GameCards.Empty()}
             """);
 
         var page = new PageInfo(File, "./", "Games finished on stream · Morfah", "Every game Morfah has finished live on Twitch, with the VODs.", updated) { Script = "site.js" };

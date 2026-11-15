@@ -438,8 +438,9 @@ body:has(.player-dialog[open]) { overflow: hidden; }
   .topbar { position: static; }
   .topbar .wrap { flex-wrap: wrap; gap: 6px 10px; height: auto; padding: 10px 0 8px; }
   .brand img { height: 36px; }
-  .nav { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; }
-  .nav a { padding: 6px 7px; font-size: 14px; white-space: nowrap; }
+  /* All five menu items fit from 360px wide, a common Android width. Narrower screens scroll the menu sideways. */
+  .nav { order: 3; width: 100%; gap: 0; justify-content: space-between; overflow-x: auto; scrollbar-width: none; }
+  .nav a { padding: 6px 4px; font-size: clamp(12px, 3.45vw, 14px); white-space: nowrap; }
   .social a { width: 34px; height: 34px; }
   .toolbar { top: 0; }
   .filters { margin-left: 0; width: 100%; }

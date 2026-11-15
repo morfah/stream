@@ -2,7 +2,6 @@
 
 // The same as Names.Key in the build: lowercase letters and digits, no accents or apostrophes.
 const norm = text => text.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/['’]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
-const plural = (count, word) => `${count} ${word}${count === 1 ? "" : "s"}`;
 
 function setUpFilters() {
   const search = document.getElementById("search");
@@ -26,8 +25,11 @@ function setUpFilters() {
         if (visible) inSection++;
       }
       section.hidden = inSection === 0;
+      // What the cards are: data-word="VOD", or data-one="category" data-many="categories". Games by default.
       const count = section.querySelector(".count");
-      count.textContent = plural(inSection, count.dataset.word ?? "game");
+      const one = count.dataset.one ?? count.dataset.word ?? "game";
+      const many = count.dataset.many ?? `${one}s`;
+      count.textContent = `${inSection} ${inSection === 1 ? one : many}`;
       shown += inSection;
     }
     document.getElementById("empty").hidden = shown > 0;

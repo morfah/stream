@@ -4,8 +4,8 @@ using MorfStudios.StreamSite.Vods;
 
 namespace MorfStudios.StreamSite.Games;
 
-/// <summary>The page that lists a game.</summary>
-public enum GameList { Finished, Unfinished, Multiplayer }
+/// <summary>The page that lists a game. Other is for streams that aren't a game, like IRL.</summary>
+public enum GameList { Finished, Unfinished, Multiplayer, Other }
 
 /// <summary>What happened in a VOD, from the dates in the finished list.</summary>
 [Flags]
@@ -38,6 +38,9 @@ public sealed class Game
     /// <summary>Marked <c>hidden</c> in <c>data/games.json</c>. Only counts for a game I haven't finished.</summary>
     public bool Hidden { get; init; }
 
+    /// <summary>Marked <c>category</c> in <c>data/games.json</c>: a kind of stream, like IRL, not a game.</summary>
+    public bool Category { get; init; }
+
     /// <summary>How the build found the game, when no data file names it.</summary>
     public FoundGame? Found { get; init; }
 
@@ -55,7 +58,10 @@ public sealed class Game
     /// The list the game's page belongs to. A finished multiplayer game, like Splitgate, is on Multiplayer too,
     /// but its page belongs to Finished.
     /// </summary>
-    public GameList List => IsFinished ? GameList.Finished : Multiplayer ? GameList.Multiplayer : GameList.Unfinished;
+    public GameList List => IsFinished ? GameList.Finished
+        : Category ? GameList.Other
+        : Multiplayer ? GameList.Multiplayer
+        : GameList.Unfinished;
 
     /// <summary>On Unfinished or Multiplayer.</summary>
     public bool IsOn(GameList list) => list == GameList.Multiplayer ? Multiplayer && LastPlayed is not null : List == list;
@@ -108,6 +114,7 @@ public sealed class Game
         Aliases = info?.Aliases ?? [],
         Multiplayer = info?.Multiplayer ?? false,
         Hidden = info?.Hidden ?? false,
+        Category = info?.Category ?? false,
     };
 
     /// <summary>Every name has Latin letters or digits so far. The fallback keeps a page if one doesn't.</summary>

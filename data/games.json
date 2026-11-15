@@ -52,5 +52,11 @@
   { "name": "Gartic Phone", "multiplayer": true },
   { "name": "Steep", "multiplayer": true },
   { "name": "Phasmophobia", "multiplayer": true },
-  { "name": "GTFO", "multiplayer": true }
+  { "name": "GTFO", "multiplayer": true },
+
+  // Not games but kinds of streams, like game dev and IRL, on the Other page.
+  { "name": "Software and Game Development", "category": true },
+  { "name": "IRL", "category": true },
+  { "name": "Just Chatting", "category": true },
+  { "name": "Games + Demos", "category": true }
 ]

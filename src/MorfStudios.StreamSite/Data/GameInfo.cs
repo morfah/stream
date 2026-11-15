@@ -16,6 +16,12 @@ public sealed record GameInfo
     /// <summary>Not on Unfinished or Multiplayer, and no page. Its VODs stay in the archive.</summary>
     public bool Hidden { get; init; }
 
+    /// <summary>
+    /// Not a game but a kind of stream, like Software and Game Development or IRL. Listed on Other
+    /// instead of Unfinished.
+    /// </summary>
+    public bool Category { get; init; }
+
     /// <summary>Other names my VOD titles use for the game, like "Silksong" for Hollow Knight: Silksong.</summary>
     public IReadOnlyList<string> Aliases { get; init; } = [];
 

@@ -38,12 +38,13 @@ public static class GameCards
 
     /// <summary>The bar under the hero: links to the years, then the filters and search.</summary>
     /// <param name="chips">Filter buttons before the search, as HTML lines. Empty for none.</param>
-    public static string Toolbar(IEnumerable<int> years, string chips = "") => $"""
+    /// <param name="one">What a card is, like "game" or "category", for the search box.</param>
+    public static string Toolbar(IEnumerable<int> years, string chips = "", string one = "game") => $"""
             <div class="toolbar">
               <div class="wrap">
                 <nav class="years" aria-label="Years">{string.Concat(years.Select(y => $"""<a href="#y{y}">{y}</a>"""))}</nav>
                 <div class="filters">{chips}
-                  <input class="search" id="search" type="search" placeholder="Find a game" aria-label="Find a game">
+                  <input class="search" id="search" type="search" placeholder="Find a {one}" aria-label="Find a {one}">
                 </div>
               </div>
             </div>
@@ -51,9 +52,11 @@ public static class GameCards
         """;
 
     /// <summary>A year's heading and its cards.</summary>
-    public static string Year(int year, IReadOnlyCollection<string> cards) => $"""
+    /// <param name="one">What a card is, for the count, like "game" or "category". The search counts with it too.</param>
+    /// <param name="many">The same for several.</param>
+    public static string Year(int year, IReadOnlyCollection<string> cards, string one = "game", string many = "games") => $"""
             <section class="year" id="y{year}">
-              <div class="year-head"><h2 class="grad-text">{year}</h2><span class="count">{Plural(cards.Count, "game")}</span></div>
+              <div class="year-head"><h2 class="grad-text">{year}</h2><span class="count" data-one="{one}" data-many="{many}">{cards.Count} {(cards.Count == 1 ? one : many)}</span></div>
               <ol class="grid">
 
         """ + string.Concat(cards) + """
@@ -63,7 +66,8 @@ public static class GameCards
         """;
 
     /// <summary>Shown by the search when no card matches.</summary>
-    public const string Empty = """
-            <p class="empty wrap" id="empty" hidden>No game matches that.</p>
+    /// <param name="one">What a card is, like "game" or "category".</param>
+    public static string Empty(string one = "game") => $"""
+            <p class="empty wrap" id="empty" hidden>No {one} matches that.</p>
         """;
 }

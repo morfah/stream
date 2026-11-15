@@ -19,6 +19,7 @@ public static class GamePage
         {
             GameList.Unfinished => (PlayedPage.UnfinishedFile, "← All unfinished games"),
             GameList.Multiplayer => (PlayedPage.MultiplayerFile, "← All multiplayer games"),
+            GameList.Other => (PlayedPage.OtherFile, "← All other streams"),
             _ => ("./", "← All finished games"),
         };
         var page = new PageInfo(FileFor(game), list, $"{game.Name} · Morfah's VODs", description, updated)
@@ -106,6 +107,8 @@ public static class GamePage
             return $"Multiplayer · last played on stream in {lastPlayed}";
         if (game.List == GameList.Unfinished)
             return $"Last played on stream in {lastPlayed} · not finished yet";
+        if (game.List == GameList.Other)
+            return $"Other streams · last streamed in {lastPlayed}";
 
         var finished = Days(game.Finishes.Select(f => f.Date));
         var hundred = game.Finishes.Select(f => f.HundredPercent).OfType<DateOnly>().ToList();
