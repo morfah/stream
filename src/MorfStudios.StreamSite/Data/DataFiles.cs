@@ -44,14 +44,19 @@ public sealed class DataFiles
         var missing = Read<List<MissingVod>>(repoRoot, "data/missing-vods.json", required: false) ?? [];
         var notGames = Read<List<string>>(repoRoot, "data/not-games.json", required: false) ?? [];
 
-        var thisYear = DateTime.UtcNow.Year;
+        // Tomorrow in UTC is today in Sweden until 01:00 or 02:00.
+        var tomorrow = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(1);
         foreach (var game in finished)
         {
             if (string.IsNullOrWhiteSpace(game.Name))
                 throw new DataException("data/finished-games.json: a game has an empty name.");
-            if (game.Year < 2000 || game.Year > thisYear)
-                throw new DataException($"data/finished-games.json: {game.Name} has the year {game.Year}.");
+            if (game.Date.Year < Vods.Vod.FirstYear || game.Date > tomorrow)
+                throw new DataException($"data/finished-games.json: {game.Name} has the date {game.Date:yyyy-MM-dd}, which can't be right.");
+            if (game.HundredPercent is { } hundred && (hundred < game.Date || hundred > tomorrow))
+                throw new DataException($"data/finished-games.json: {game.Name} has 100% on {hundred:yyyy-MM-dd}, which can't be right with the credits on {game.Date:yyyy-MM-dd}.");
         }
+        // Newest first, whatever the file's order. Finishes on the same day keep the file's order.
+        finished = finished.OrderByDescending(g => g.Date).ToList();
 
         var byName = new Dictionary<string, GameInfo>();
         foreach (var game in games)

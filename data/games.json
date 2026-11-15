@@ -8,14 +8,13 @@
   { "name": "Astro's Playground", "twitch": "Astro's Playroom", "aliases": ["Astro's Playroom"] },
   { "name": "A Plague Tale: Innocence", "aliases": ["A Plague Tale"] },
   { "name": "Five Nights at Freddy's: Security Breach", "aliases": ["FNAF: Security Breach"] },
-  { "name": "The Room: Old Sins", "twitch": "The Room 4: Old Sins", "aliases": ["The Room 4: Old Sins"] },
   { "name": "Tomb Raider", "twitchId": "220828788" },
   { "name": "Deltarune Chapter 1&2", "twitch": "Deltarune", "aliases": ["Deltarune"] },
   { "name": "Resident Evil 2", "twitchId": "293693714" },
-  { "name": "Onryo", "twitchId": "1457828722" },
+  { "name": "Onryo | 怨霊", "twitchId": "1457828722" },
   { "name": "Spyro Reignited Trilogy", "cover": "data/covers/spyro-reignited-trilogy.jpg", "aliases": ["Spyro the Dragon: Reignited Trilogy"] },
   { "name": "Crash Bandicoot N. Sane Trilogy", "cover": "data/covers/crash-bandicoot-n-sane-trilogy.jpg" },
-  { "name": "Fall Guys: Ultimate Knockout", "twitch": "Fall Guys", "aliases": ["Fall Guys"] },
+  { "name": "Fall Guys: Ultimate Knockout", "twitch": "Fall Guys", "aliases": ["Fall Guys"], "multiplayer": true },
   { "name": "Sonic Mania - Encore DLC", "twitch": "Sonic Mania" },
   { "name": "Doom Eternal: The Ancient Gods - Part One", "twitch": "DOOM Eternal" },
   { "name": "Five Nights at Freddy's 4: The Final Chapter", "twitchId": "489567", "aliases": ["Five Nights at Freddy's 4"] },
@@ -31,8 +30,13 @@
   { "name": "Klonoa: Door to Phantomile", "twitchId": "8753" },
   { "name": "Tomb Raider II", "aliases": ["Tomb Raider 2"] },
   { "name": "Grand Theft Auto", "aliases": ["GTA 1", "GTA1"] },
+  // Steam's names, with the Japanese. Twitch's have only the English.
+  { "name": "Aka Manto | 赤マント", "twitchId": "519168" },
+  { "name": "Yuki Onna | 雪女", "twitchId": "1847144098" },
+  { "name": "Hanako | 花子さん", "twitchId": "216385978" },
 
-  // Games without an ending, on Multiplayer.
+  // Games without an ending, on Multiplayer. Finished ones, like Splitgate and Fall Guys, are on Finished too.
+  { "name": "Splitgate", "multiplayer": true },
   { "name": "Apex Legends", "multiplayer": true },
   { "name": "Valorant", "multiplayer": true },
   { "name": "Overwatch 2", "twitch": "Overwatch", "multiplayer": true },

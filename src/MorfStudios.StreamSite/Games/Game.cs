@@ -7,6 +7,10 @@ namespace MorfStudios.StreamSite.Games;
 /// <summary>The page that lists a game.</summary>
 public enum GameList { Finished, Unfinished, Multiplayer }
 
+/// <summary>What happened in a VOD, from the dates in the finished list.</summary>
+[Flags]
+public enum Milestone { None = 0, Finished = 1, HundredPercent = 2 }
+
 /// <summary>
 /// A game I've played on stream, with its own page. Finishing it twice, like Elden Ring, is still one game.
 /// From the finished list, <c>data/games.json</c>, or a VOD title naming a Twitch category (<see cref="GameFinder"/>).
@@ -47,8 +51,25 @@ public sealed class Game
 
     public bool IsFinished => Finishes.Count > 0;
 
-    /// <summary>The finished list wins, so Fall Guys is on Finished even if it's marked multiplayer.</summary>
+    /// <summary>
+    /// The list the game's page belongs to. A finished multiplayer game, like Splitgate, is on Multiplayer too,
+    /// but its page belongs to Finished.
+    /// </summary>
     public GameList List => IsFinished ? GameList.Finished : Multiplayer ? GameList.Multiplayer : GameList.Unfinished;
+
+    /// <summary>On Unfinished or Multiplayer.</summary>
+    public bool IsOn(GameList list) => list == GameList.Multiplayer ? Multiplayer && LastPlayed is not null : List == list;
+
+    /// <summary>What happened in the VOD: the credits or 100%. Only the game's last VOD on such a day counts.</summary>
+    public Milestone MilestonesOf(Vod vod) => Vods.LastOrDefault(v => v.Date == vod.Date) == vod ? MilestonesOn(vod.Date) : Milestone.None;
+
+    /// <summary>The same for a lost VOD, on a day without a VOD of the game, like The Ghost Train's.</summary>
+    public Milestone MilestonesOf(MissingVod missing) =>
+        !Vods.Any(v => v.Date == missing.Date) && MissingVods.LastOrDefault(m => m.Date == missing.Date) == missing ? MilestonesOn(missing.Date) : Milestone.None;
+
+    private Milestone MilestonesOn(DateOnly day) =>
+        (Finishes.Any(f => f.Date == day) ? Milestone.Finished : Milestone.None) |
+        (Finishes.Any(f => f.HundredPercent == day) ? Milestone.HundredPercent : Milestone.None);
 
     /// <summary>
     /// Finished games always have a page. Others need a VOD, or a missing one, and mustn't be hidden.

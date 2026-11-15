@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using MorfStudios.StreamSite.Data;
 using MorfStudios.StreamSite.Games;
@@ -22,7 +23,7 @@ public static class FinishedPage
                   <p class="lede">Every game I've played to the end live on stream.</p>
                   <dl class="stats">
                     <div><dt>games finished</dt><dd>{games.Count}</dd></div>
-                    <div><dt>at 100% 🏆</dt><dd>{games.Count(g => g.HundredPercent)}</dd></div>
+                    <div><dt>at 100% 🏆</dt><dd>{games.Count(g => g.HundredPercent is not null)}</dd></div>
                     <div><dt>years of streams</dt><dd>{years.Count}</dd></div>
                   </dl>
                 </section>
@@ -56,7 +57,7 @@ public static class FinishedPage
     private static string Card(FinishedGame game, Game page)
     {
         var badges = string.Concat(
-            game.HundredPercent ? """<span class="badge gold">🏆 100%</span>""" : "",
+            game.HundredPercent is { } hundred ? $"""<span class="badge gold" title="100% on {hundred.ToString("d MMM yyyy", CultureInfo.InvariantCulture)}">🏆 100%</span>""" : "",
             game.Coop is not null ? """<span class="badge">Co-op</span>""" : "",
             game.Difficulty is not null ? $"""<span class="badge" title="{E(game.Difficulty)} difficulty">💀</span>""" : "");
         var notes = new[]
@@ -65,7 +66,7 @@ public static class FinishedPage
             game.Coop is { } coop ? $"Co-op with {E(coop)}" : null,
             game.Difficulty is { } difficulty ? $"{E(difficulty)} difficulty" : null,
         };
-        var flags = (game.HundredPercent ? " data-hundred" : "") + (game.Coop is not null ? " data-coop" : "");
+        var flags = (game.HundredPercent is not null ? " data-hundred" : "") + (game.Coop is not null ? " data-coop" : "");
         return GameCards.Card(game.Name, page, badges, notes, flags);
     }
 }

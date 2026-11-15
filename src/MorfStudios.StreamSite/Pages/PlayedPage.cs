@@ -19,7 +19,7 @@ public static class PlayedPage
     /// <param name="games">The games with a page. Only those on <paramref name="list"/> are shown.</param>
     public static string Render(GameList list, IEnumerable<Game> games, DateOnly updated)
     {
-        var played = games.Where(g => g.List == list).OrderByDescending(g => g.LastPlayed).ThenBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ToList();
+        var played = games.Where(g => g.IsOn(list)).OrderByDescending(g => g.LastPlayed).ThenBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ToList();
         var years = played.Select(g => g.LastPlayed!.Value.Year).Distinct().ToList();
         var vods = played.SelectMany(g => g.Vods).DistinctBy(v => v.Id).ToList();
         var hours = TimeSpan.FromTicks(vods.Sum(v => v.Duration.Ticks)).TotalHours;
@@ -53,7 +53,8 @@ public static class PlayedPage
             """);
         foreach (var year in years)
         {
-            var cards = played.Where(g => g.LastPlayed!.Value.Year == year).Select(g => GameCards.Card(g.Name, g, "", [GameCards.VodsNote(g)])).ToList();
+            var cards = played.Where(g => g.LastPlayed!.Value.Year == year)
+                .Select(g => GameCards.Card(g.Name, g, "", [GameCards.VodsNote(g), g.IsFinished ? "Finished" : null])).ToList();
             body.Append(GameCards.Year(year, cards));
         }
         body.Append($"""

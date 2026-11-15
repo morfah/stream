@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using MorfStudios.StreamSite.Games;
 using MorfStudios.StreamSite.Vods;
 using static MorfStudios.StreamSite.Pages.Html;
 
@@ -11,8 +12,12 @@ public static class VodsPage
     public const string File = "vods.html";
 
     /// <param name="vods">Newest first, from <see cref="Vod.NewestFirst"/>.</param>
-    public static string Render(IReadOnlyList<Vod> vods, DateOnly updated)
+    /// <param name="games">The games with a page, for marking the VODs where I finished one or got 100%.</param>
+    public static string Render(IReadOnlyList<Vod> vods, IEnumerable<Game> games, DateOnly updated)
     {
+        var milestones = games.SelectMany(g => g.Vods.Select(v => (Vod: v, Game: g, Kind: g.MilestonesOf(v))))
+            .Where(m => m.Kind != Milestone.None)
+            .ToLookup(m => m.Vod.Id, m => (m.Game, m.Kind));
         var years = vods.Select(v => v.Date.Year).Distinct().OrderDescending().ToList();
         var hours = (int)Math.Round(vods.Sum(v => v.Duration.TotalHours));
         var body = new StringBuilder();
@@ -52,7 +57,7 @@ public static class VodsPage
 
                 """);
             foreach (var vod in inYear)
-                body.Append(VodCards.Card(vod));
+                body.Append(VodCards.Card(vod, VodCards.Milestones(milestones[vod.Id])));
             body.Append("""
                       </ol>
                     </section>

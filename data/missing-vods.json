@@ -2,7 +2,7 @@
 // Their games' pages show them in the VOD list with a sad face, so the gap is explained.
 // "title" is optional. Without it, the page shows the games' names.
 [
-  { "date": "2021-07-31", "games": ["The Ghost Train", "Missing Children 行方不明"] },
+  { "date": "2021-07-31", "games": ["The Ghost Train", "Missing Children | 行方不明"] },
   { "date": "2025-09-21", "games": ["Hollow Knight: Silksong"], "title": "Silksong - Part 23" },
   { "date": "2025-09-21", "games": ["Hollow Knight: Silksong"], "title": "Silksong - Part 24" }
 ]

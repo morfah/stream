@@ -8,18 +8,19 @@ A C# program builds the pages from the files in `data`, my VODs on YouTube and g
 
 Edit these by hand, on GitHub or on my PC. A mistake in a file stops the build and the Actions run says where, so the live site stays as it was.
 
-- `data/finished-games.json`: the games I've finished, newest first. One line per game:
+- `data/finished-games.json`: the games I've finished. `date` is the day I got the credits, and `hundredPercent` the day I got every achievement or trophy, if I did. One line per playthrough, so a game finished twice with different friends has two lines. The site sorts them by date, newest first, so a new line can go anywhere in the file:
   ```json
-  { "year": 2025, "name": "Hollow Knight: Silksong" },
-  { "year": 2024, "name": "Resident Evil 6", "coop": "franticalle" },
-  { "year": 2022, "name": "God of War Ragnarök", "hundredPercent": true, "difficulty": "Hardest" },
+  { "date": "2025-10-14", "name": "Hollow Knight: Silksong" },
+  { "date": "2024-01-25", "name": "Resident Evil 6", "coop": "franticalle" },
+  { "date": "2022-12-03", "name": "God of War Ragnarök", "hundredPercent": "2023-01-28", "difficulty": "Hardest" },
   ```
+  On the game's page and in the VOD archive, its last VOD on each of those days gets a 🏁 Finished or 🏆 100% badge. The dates before November 2026 were guessed from the VOD titles (FINALE, THE END, Credits, 100%, Platinum), otherwise the game's last VOD that year, and then checked by hand.
 - `data/games.json`: only for games that need help finding their cover or their VODs, or that are multiplayer or hidden. A game here that isn't finished is on Unfinished or Multiplayer once a VOD title names it.
   - `twitch`: the Twitch category's name, when it isn't the game's name.
   - `twitchId`: the Twitch category's ID, when several share a name, like an old game and its remake.
   - `cover`: my own picture in the repo, like `data/covers/game.jpg`, when Twitch has none.
   - `aliases`: other names my VOD titles use for the game, like `["Silksong"]` for Hollow Knight: Silksong.
-  - `multiplayer`: `true` for a game without an ending, like Apex Legends. It's on Multiplayer instead of Unfinished, unless it's on the finished list.
+  - `multiplayer`: `true` for a game without an ending, like Apex Legends. It's on Multiplayer instead of Unfinished. One I'm done with, like Splitgate, goes in the finished list too, and is on both Finished and Multiplayer.
   - `hidden`: `true` for a game I don't want listed. It's not on Unfinished or Multiplayer and has no page, but its VODs stay in the archive.
 - `data/not-games.json`: pieces of VOD titles that have a Twitch category's name but aren't a game I played, like `"Birthday"` in `Birthday 🥳 | Learning Quake speedrunning`.
 - `data/vod-fixes.json`: VODs whose titles don't name their games, or name the wrong ones. A VOD's ID and the games it really has, which replaces what its title gives. `[]` means no game:

@@ -73,8 +73,9 @@ public static class GamePage
 
                 """);
             // Missing VODs in date order between the others, after those of the same day.
-            var cards = game.Vods.Select((vod, i) => (vod.Date, Sort: i, Html: VodCards.Card(vod)))
-                .Concat(game.MissingVods.Select((missing, i) => (missing.Date, Sort: game.Vods.Count + i, Html: VodCards.MissingCard(missing, game))))
+            var cards = game.Vods.Select((vod, i) => (vod.Date, Sort: i, Html: VodCards.Card(vod, VodCards.Milestones([(game, game.MilestonesOf(vod))]))))
+                .Concat(game.MissingVods.Select((missing, i) => (missing.Date, Sort: game.Vods.Count + i,
+                    Html: VodCards.MissingCard(missing, game, VodCards.Milestones([(game, game.MilestonesOf(missing))])))))
                 .OrderBy(card => card.Date)
                 .ThenBy(card => card.Sort);
             foreach (var card in cards)
@@ -94,7 +95,10 @@ public static class GamePage
         return Layout.Page(page, body.ToString());
     }
 
-    /// <summary>Like "Finished on stream in 2022 and 2023", or "Last played on stream in 2025 · not finished yet".</summary>
+    /// <summary>
+    /// Like "Finished on stream on 3 Dec 2022 · 100% on 28 Jan 2023", "Finished on stream on 24 Feb 2023 and 2 Feb 2024 · 100% on
+    /// 2 Feb 2024", "Finished on stream at 100% on 1 Dec 2021", or "Last played on stream in 2025 · not finished yet".
+    /// </summary>
     private static string Status(Game game)
     {
         var lastPlayed = game.LastPlayed?.Year.ToString(CultureInfo.InvariantCulture);
@@ -103,13 +107,25 @@ public static class GamePage
         if (game.List == GameList.Unfinished)
             return $"Last played on stream in {lastPlayed} · not finished yet";
 
-        var years = game.Finishes.Select(f => f.Year).Distinct().Order().Select(y => y.ToString(CultureInfo.InvariantCulture)).ToArray();
-        var list = years.Length == 1 ? years[0] : string.Join(", ", years[..^1]) + " and " + years[^1];
-        return $"Finished on stream in {list}";
+        var finished = Days(game.Finishes.Select(f => f.Date));
+        var hundred = game.Finishes.Select(f => f.HundredPercent).OfType<DateOnly>().ToList();
+        if (hundred.Count == 0)
+            return $"Finished on stream on {finished}";
+        // "Finished on stream at 100% on 1 Dec 2021" when I got both the same day.
+        return game.Finishes.All(f => f.HundredPercent == f.Date)
+            ? $"Finished on stream at 100% on {finished}"
+            : $"Finished on stream on {finished} · 100% on {Days(hundred)}";
+    }
+
+    /// <summary>Like "20 Apr 2022", or "24 Feb 2023 and 2 Feb 2024".</summary>
+    private static string Days(IEnumerable<DateOnly> days)
+    {
+        var list = days.Distinct().Order().Select(d => d.ToString("d MMM yyyy", CultureInfo.InvariantCulture)).ToArray();
+        return list.Length == 1 ? list[0] : string.Join(", ", list[..^1]) + " and " + list[^1];
     }
 
     private static string Badges(Game game) => string.Concat(
-        game.Finishes.Any(f => f.HundredPercent) ? """<span class="badge gold">🏆 100%</span>""" : "",
+        game.Finishes.Any(f => f.HundredPercent is not null) ? """<span class="badge gold">🏆 100%</span>""" : "",
         string.Concat(game.Finishes.Select(f => f.Coop).OfType<string>().Distinct().Select(coop =>
             $"""<a class="badge" href="https://www.twitch.tv/{Uri.EscapeDataString(coop)}">Co-op with {E(coop)}</a>""")),
         string.Concat(game.Finishes.Select(f => f.Difficulty).OfType<string>().Distinct().Select(difficulty =>
