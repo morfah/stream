@@ -1,5 +1,6 @@
 using System.Text;
 using MorfStudios.StreamSite.Data;
+using MorfStudios.StreamSite.Games;
 using static MorfStudios.StreamSite.Pages.Html;
 
 namespace MorfStudios.StreamSite.Pages;
@@ -9,8 +10,9 @@ public static class FinishedPage
 {
     public const string File = "index.html";
 
-    /// <param name="covers">From <see cref="Twitch.CoverFinder"/>, keyed with <see cref="Names.Key"/>.</param>
-    public static string Render(IReadOnlyList<FinishedGame> games, IReadOnlyDictionary<string, string> covers, DateOnly updated)
+    /// <param name="games">The finished list, one line per finish.</param>
+    /// <param name="pages">The game page for each finish, keyed with <see cref="Names.Key"/>.</param>
+    public static string Render(IReadOnlyList<FinishedGame> games, IReadOnlyDictionary<string, Game> pages, DateOnly updated)
     {
         var years = games.Select(g => g.Year).Distinct().OrderDescending().ToList();
         var body = new StringBuilder();
@@ -53,7 +55,7 @@ public static class FinishedPage
 
                 """);
             foreach (var game in inYear)
-                body.Append(Card(game, covers.GetValueOrDefault(Names.Key(game.Name))));
+                body.Append(Card(game, pages[Names.Key(game.Name)]));
             body.Append("""
                       </ol>
                     </section>
@@ -66,11 +68,15 @@ public static class FinishedPage
                 <p class="empty wrap" id="empty" hidden>No game matches that.</p>
             """);
 
-        return Layout.Page("./", "Games finished on stream · Morfah", "Every game Morfah has finished live on Twitch.", body.ToString(), updated, "site.js");
+        var page = new PageInfo(File, "./", "Games finished on stream · Morfah", "Every game Morfah has finished live on Twitch, with the VODs.", updated) { Script = "site.js" };
+        return Layout.Page(page, body.ToString());
     }
 
-    private static string Card(FinishedGame game, string? cover)
+    /// <param name="game">One finish. A game finished twice has a card for each.</param>
+    /// <param name="page">The game's page, with its cover and VODs.</param>
+    private static string Card(FinishedGame game, Game page)
     {
+        var cover = page.Cover?.Small;
         var art = cover is null
             ? $"<span>{E(game.Name)}</span>"
             : $"""<img src="{E(cover)}" alt="" loading="lazy" width="{Twitch.CoverFinder.Width}" height="{Twitch.CoverFinder.Height}">""";
@@ -82,6 +88,7 @@ public static class FinishedPage
 
         var notes = string.Join(" · ", new[]
         {
+            page.Vods.Count > 0 ? Plural(page.Vods.Count, "VOD") : page.MissingVods.Count > 0 ? "VOD missing 😢" : "No VODs",
             game.Coop is { } coop ? $"Co-op with {E(coop)}" : null,
             game.Difficulty is { } difficulty ? $"{E(difficulty)} difficulty" : null,
         }.OfType<string>());
@@ -92,8 +99,10 @@ public static class FinishedPage
 
         return $"""
                       <li class="card" data-name="{E(Names.Key(game.Name))}"{flags}>
-                        <div class="cover{(cover is null ? " no-art" : "")}">{art}{badgeList}</div>
-                        <h3>{E(game.Name)}</h3>{note}
+                        <a href="{E(page.Path)}">
+                          <div class="cover{(cover is null ? " no-art" : "")}">{art}{badgeList}</div>
+                          <h3>{E(game.Name)}</h3>{note}
+                        </a>
                       </li>
 
             """;

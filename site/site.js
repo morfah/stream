@@ -47,22 +47,50 @@ function setUpFilters() {
 
 // VOD links open the player instead of YouTube. The YouTube player only loads then.
 // Ctrl, Shift or middle click still opens YouTube, and so do VODs with embedding turned off.
+// In a list with data-sequence, like a game's VODs, "Next part" plays the next one.
 function setUpPlayer() {
   const dialog = document.getElementById("player");
   if (!dialog) return;
 
   const frame = dialog.querySelector("iframe");
+  const next = document.getElementById("player-next");
+  let current = null;
 
-  document.addEventListener("click", event => {
-    const link = event.target.closest("a.vod[data-video]");
-    if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
+  const nextVod = link => {
+    const list = link?.closest("[data-sequence]");
+    if (!list) return null;
+    const vods = [...list.querySelectorAll("a.vod[data-video]")];
+    return vods[vods.indexOf(link) + 1] ?? null;
+  };
+
+  function play(link) {
+    current?.removeAttribute("aria-current");
+    current = link;
+    link.setAttribute("aria-current", "true");
     frame.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(link.dataset.video)}?autoplay=1&rel=0`;
     document.getElementById("player-title").textContent = `${link.dataset.title} · ${link.dataset.date}`;
     document.getElementById("player-youtube").href = link.href;
-    dialog.showModal();
+    next.hidden = !nextVod(link);
+    if (!dialog.open) dialog.showModal();
+  }
+
+  const plainClick = event => event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey;
+
+  document.addEventListener("click", event => {
+    if (!plainClick(event)) return;
+    const link = event.target.closest("a.vod[data-video]");
+    // "Watch from the start" on a game page plays its first VOD.
+    const start = event.target.closest("[data-play-first]") && document.querySelector("[data-sequence] a.vod[data-video]");
+    const target = link ?? start;
+    if (!target) return;
+    event.preventDefault();
+    play(target);
   });
 
+  next.addEventListener("click", () => {
+    const following = nextVod(current);
+    if (following) play(following);
+  });
   document.getElementById("player-close").addEventListener("click", () => dialog.close());
   // A click on the dark area around the player closes it too.
   dialog.addEventListener("click", event => {

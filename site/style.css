@@ -287,6 +287,21 @@ img { display: block; max-width: 100%; }
   color: var(--muted);
   text-align: center;
 }
+/* ---------- Review page ---------- */
+.review { padding-bottom: 48px; }
+.review-section { margin: 28px 0 40px; }
+.review-section h2 { margin: 0; font: 800 26px/1.2 var(--font-display); }
+.review-section h2 span { color: var(--muted); font-weight: 600; font-size: 18px; margin-left: 6px; }
+.review-section > p { margin: 6px 0 14px; color: var(--muted); }
+.review-section ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.review-section li { padding: 8px 4px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.review-section li a { color: var(--text); }
+.review-section .id { user-select: all; font-size: 13px; padding: 2px 6px; border-radius: 6px; background: var(--surface-2); color: var(--yellow); }
+.review-section .date { color: var(--muted); font-size: 14px; margin: 0 6px; }
+.review-section .games { color: var(--orange); }
+.review-section .none { color: var(--faint); }
+.lede code { font-size: 15px; color: var(--yellow); }
+
 .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
 .btn {
   display: inline-flex;
@@ -391,6 +406,22 @@ body:has(.player-dialog[open]) { overflow: hidden; }
 .vod:hover .thumb, .vod:focus-visible .thumb { transform: translateY(-3px); box-shadow: 0 0 0 2px var(--pink), 0 14px 30px -12px rgb(255 45 149 / 0.5); }
 .vod:hover .play, .vod:focus-visible .play { opacity: 1; }
 .vod[aria-current="true"] .thumb { box-shadow: 0 0 0 2px var(--yellow); }
+/* A lost VOD: a sad face instead of a thumbnail, and nothing to click. */
+.vod.missing { cursor: default; }
+.vod.missing .thumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px dashed var(--line);
+  background: repeating-linear-gradient(135deg, var(--surface), var(--surface) 14px, rgb(33 27 43 / 0.6) 14px, rgb(33 27 43 / 0.6) 28px);
+}
+.vod.missing:hover .thumb { transform: none; box-shadow: none; }
+.vod.missing .sad { font-size: 44px; line-height: 1; }
+.vod.missing .missing-text { color: var(--muted); font-weight: 700; font-size: 14px; }
+.vod.missing .vod-title { color: var(--muted); }
+
 .vod-title { display: block; margin: 10px 2px 0; font-weight: 650; }
 .vod-date { display: block; margin: 2px 2px 0; color: var(--muted); font-size: 14px; }
 

@@ -40,6 +40,12 @@ public sealed record Vod(
         .ThenByDescending(v => v.Order)
         .ThenByDescending(v => v.UploadedAt);
 
+    /// <summary>Oldest stream first, the order of a playthrough.</summary>
+    public static IOrderedEnumerable<Vod> OldestFirst(IEnumerable<Vod> vods) => vods
+        .OrderBy(v => v.Date)
+        .ThenBy(v => v.Order)
+        .ThenBy(v => v.UploadedAt);
+
     /// <summary>My first VODs are from 2011, so an earlier date in a title is a typo, like 2002 for 2020.</summary>
     public const int FirstYear = 2010;
 

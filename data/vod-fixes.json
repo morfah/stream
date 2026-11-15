@@ -1,0 +1,18 @@
+// VODs whose titles don't name their games, or name the wrong ones.
+// A VOD's YouTube ID, the part after "v=" in its link, and the games it really has. This replaces what
+// its title gives. [] means no game. Game names as in finished-games.json, or a short name from games.json.
+// VODs that may need a fix, with their IDs, are on review.html.
+{
+  // Milk games - 2022-08-30
+  "Q2Edu-6TAAM": ["Milk inside a bag of milk inside a bag of milk", "Milk outside a bag of milk outside a bag of milk"],
+  // Lego Builders Journey and Milk game - 2023-01-06
+  "5_HA8oaV_Nk": ["LEGO Builder's Journey", "Milk outside a bag of milk outside a bag of milk"],
+  // 25 HOUR STREAM fixes - 2022-01-03
+  "K86DYaBdTX4": ["Subnautica: Below Zero", "Katamari Damacy REROLL"],
+  "MFzHPQPZmi0": ["Katamari Damacy REROLL", "DEVOUR"],
+  "wpBF1wnxpeY": ["Katamari Damacy REROLL", "Subnautica: Below Zero", "A Hat in Time"],
+  "U6MCnoFbBgU": ["A Hat in Time"],
+  "D8DNGnQo_8Q": ["A Hat in Time"],
+  // Short indie games - 2022-01-29
+  "O0qekDc_5lU": ["Refunct", "Burning Daylight", "Celeste"]
+}

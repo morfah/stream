@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using MorfStudios.StreamSite;
 using MorfStudios.StreamSite.Data;
+using MorfStudios.StreamSite.Games;
 using MorfStudios.StreamSite.Pages;
 using MorfStudios.StreamSite.Twitch;
 using MorfStudios.StreamSite.Vods;
@@ -52,13 +53,33 @@ try
     EmptyFolder(siteDir);
     CopyFolder(Path.Combine(repoRoot, "site"), siteDir);
 
+    var games = Game.FromData(data);
     var covers = await new CoverFinder(http, twitch, repoRoot, siteDir, report)
-        .FindAsync(data.FinishedGames.Select(g => g.Name), data.Games, ct);
+        .FindAsync(games.Select(g => g.Name), data.Games, ct);
+    foreach (var game in games)
+        game.Cover = covers.GetValueOrDefault(game.Key);
+
     var vods = await LoadVodsAsync(youTube, report);
+    var links = VodLinker.Link(vods, games, data.VodFixes, report);
+    VodLinker.AddMissing(games, data.MissingVods, report);
+    report.Add("Games", [
+        $"{games.Count(g => g.Vods.Count > 0)} of {games.Count} games have VODs.",
+        $"{vods.Count(v => links.GamesByVod[v.Id].Count > 0)} of {vods.Count} VODs have a game, {links.Fixed.Count} of them fixed by hand. The rest are on {ReviewPage.File}.",
+    ]);
 
     var updated = DateOnly.FromDateTime(DateTime.UtcNow);
-    await File.WriteAllTextAsync(Path.Combine(siteDir, FinishedPage.File), FinishedPage.Render(data.FinishedGames, covers, updated));
-    await File.WriteAllTextAsync(Path.Combine(siteDir, VodsPage.File), VodsPage.Render(vods, updated));
+    await WritePageAsync(FinishedPage.File, FinishedPage.Render(data.FinishedGames, games.ToDictionary(g => g.Key), updated));
+    await WritePageAsync(VodsPage.File, VodsPage.Render(vods, updated));
+    await WritePageAsync(ReviewPage.File, ReviewPage.Render(games, vods, links, updated));
+    foreach (var game in games)
+        await WritePageAsync(GamePage.FileFor(game), GamePage.Render(game, updated));
+
+    async Task WritePageAsync(string path, string html)
+    {
+        var file = Path.Combine(siteDir, path);
+        Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+        await File.WriteAllTextAsync(file, html);
+    }
 
     report.Print();
     report.WriteGitHubSummary();

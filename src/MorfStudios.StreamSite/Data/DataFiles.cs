@@ -20,11 +20,22 @@ public sealed class DataFiles
     /// <summary>Keyed by the game's name, compared with <see cref="Names.Key"/>.</summary>
     public required IReadOnlyDictionary<string, GameInfo> Games { get; init; }
 
+    /// <summary>
+    /// From <c>data/vod-fixes.json</c>: a VOD's YouTube ID and the names of the games it really has,
+    /// replacing what its title gave. An empty list means no game.
+    /// </summary>
+    public required IReadOnlyDictionary<string, IReadOnlyList<string>> VodFixes { get; init; }
+
+    /// <summary>From <c>data/missing-vods.json</c>: streams whose VOD is lost.</summary>
+    public required IReadOnlyList<MissingVod> MissingVods { get; init; }
+
     /// <exception cref="DataException">A file is missing or has a mistake.</exception>
     public static DataFiles Load(string repoRoot)
     {
         var finished = Read<List<FinishedGame>>(repoRoot, "data/finished-games.json", required: true) ?? [];
         var games = Read<List<GameInfo>>(repoRoot, "data/games.json", required: false) ?? [];
+        var fixes = Read<Dictionary<string, IReadOnlyList<string>>>(repoRoot, "data/vod-fixes.json", required: false) ?? [];
+        var missing = Read<List<MissingVod>>(repoRoot, "data/missing-vods.json", required: false) ?? [];
 
         var thisYear = DateTime.UtcNow.Year;
         foreach (var game in finished)
@@ -42,7 +53,7 @@ public sealed class DataFiles
                 throw new DataException($"data/games.json: {game.Name} is in the file twice.");
         }
 
-        return new DataFiles { FinishedGames = finished, Games = byName };
+        return new DataFiles { FinishedGames = finished, Games = byName, VodFixes = fixes, MissingVods = missing };
     }
 
     private static T? Read<T>(string repoRoot, string relativePath, bool required) where T : class

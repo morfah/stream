@@ -52,7 +52,7 @@ public static class VodsPage
 
                 """);
             foreach (var vod in inYear)
-                body.Append(Card(vod));
+                body.Append(VodCards.Card(vod));
             body.Append("""
                       </ol>
                     </section>
@@ -70,40 +70,10 @@ public static class VodsPage
                 </div>
                 <p class="empty wrap" id="empty" hidden>No VOD matches that.</p>
 
-            {PlayerDialog}
+            {VodCards.PlayerDialog}
             """);
 
-        return Layout.Page(File, "VOD archive · Morfah", "Every stream on Morfah's YouTube VOD channel, by year.", body.ToString(), updated, "site.js");
+        var page = new PageInfo(File, File, "VOD archive · Morfah", "Every stream on Morfah's YouTube VOD channel, by year.", updated) { Script = "site.js" };
+        return Layout.Page(page, body.ToString());
     }
-
-    /// <summary>
-    /// A link to the VOD on YouTube. With JavaScript, a click plays it in <see cref="PlayerDialog"/> instead,
-    /// unless embedding is off for it (no <c>data-video</c>).
-    /// </summary>
-    public static string Card(Vod vod)
-    {
-        var play = vod.Embeddable ? $""" data-video="{E(vod.Id)}" data-title="{E(vod.ShortTitle)}" data-date="{E(vod.LongDate)}" """.TrimEnd() : "";
-        return $"""
-                      <li class="card" data-name="{E(Names.Key(vod.Title))}">
-                        <a class="vod" href="{E(vod.WatchUrl)}"{play}>
-                          <span class="thumb"><img src="{E(vod.ThumbnailUrl)}" alt="" loading="lazy" width="480" height="360"><span class="duration">{vod.Length}</span><span class="play"></span></span>
-                          <span class="vod-title">{E(vod.ShortTitle)}</span>
-                          <span class="vod-date">{E(vod.LongDate)}</span>
-                        </a>
-                      </li>
-
-            """;
-    }
-
-    /// <summary>The player that VOD cards open. The YouTube player only loads when a VOD is picked.</summary>
-    public const string PlayerDialog = """
-          <dialog class="player-dialog" id="player" aria-labelledby="player-title">
-            <div class="frame"><iframe title="VOD player" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
-            <div class="now">
-              <h2 id="player-title"></h2>
-              <a class="btn" id="player-youtube" href="#" target="_blank" rel="noopener">Open on YouTube</a>
-              <button class="btn" type="button" id="player-close">Close</button>
-            </div>
-          </dialog>
-        """;
 }

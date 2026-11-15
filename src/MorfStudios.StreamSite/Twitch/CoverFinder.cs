@@ -9,16 +9,21 @@ namespace MorfStudios.StreamSite.Twitch;
 /// </summary>
 public sealed class CoverFinder(HttpClient http, TwitchClient? twitch, string repoRoot, string siteDir, Report report)
 {
+    /// <summary>The size in the game lists.</summary>
     public const int Width = 285;
     public const int Height = 380;
 
+    /// <summary>The size on a game's page and in link previews.</summary>
+    public const int LargeWidth = 480;
+    public const int LargeHeight = 640;
+
     private string CoversDir => Path.Combine(siteDir, "covers");
 
-    /// <summary>Covers by game, keyed with <see cref="Names.Key"/>: the path from the site's root, like <c>covers/1234.jpg</c>.</summary>
-    public async Task<IReadOnlyDictionary<string, string>> FindAsync(IEnumerable<string> gameNames, IReadOnlyDictionary<string, GameInfo> info, CancellationToken ct)
+    /// <summary>Covers by game, keyed with <see cref="Names.Key"/>.</summary>
+    public async Task<IReadOnlyDictionary<string, Cover>> FindAsync(IEnumerable<string> gameNames, IReadOnlyDictionary<string, GameInfo> info, CancellationToken ct)
     {
         Directory.CreateDirectory(CoversDir);
-        var covers = new Dictionary<string, string>();
+        var covers = new Dictionary<string, Cover>();
         var lookups = new List<Lookup>();
 
         foreach (var name in gameNames.DistinctBy(Names.Key))
@@ -46,8 +51,8 @@ public sealed class CoverFinder(HttpClient http, TwitchClient? twitch, string re
         {
             if (!categories.TryGetValue(lookup.Key, out var category))
                 notFound.Add(lookup.Name);
-            else if (saved.TryGetValue(category.Id, out var path))
-                covers[lookup.Key] = path;
+            else if (saved.TryGetValue(category.Id, out var cover))
+                covers[lookup.Key] = cover;
             else
                 noArt.Add($"{lookup.Name} (Twitch category \"{category.Name}\", ID {category.Id})");
         }
@@ -112,27 +117,36 @@ public sealed class CoverFinder(HttpClient http, TwitchClient? twitch, string re
     }
 
     /// <summary>Saves each category's box art. Keyed by category ID. Twitch's "no box art" picture is left out.</summary>
-    private async Task<IReadOnlyDictionary<string, string>> DownloadBoxArtAsync(IEnumerable<TwitchCategory> categories, CancellationToken ct)
+    private async Task<IReadOnlyDictionary<string, Cover>> DownloadBoxArtAsync(IEnumerable<TwitchCategory> categories, CancellationToken ct)
     {
-        var saved = new ConcurrentDictionary<string, string>();
+        var saved = new ConcurrentDictionary<string, Cover>();
         var options = new ParallelOptions { MaxDegreeOfParallelism = 8, CancellationToken = ct };
         await Parallel.ForEachAsync(categories, options, async (category, token) =>
         {
-            var url = category.BoxArtUrl.Replace("{width}", Width.ToString()).Replace("{height}", Height.ToString());
-            using var response = await http.GetAsync(url, token);
-            response.EnsureSuccessStatusCode();
-            // Twitch answers a category without box art with a redirect to its placeholder.
-            if (response.RequestMessage?.RequestUri?.AbsolutePath.Contains("404_boxart") == true)
-                return;
-
-            var file = $"{category.Id}.jpg";
-            await File.WriteAllBytesAsync(Path.Combine(CoversDir, file), await response.Content.ReadAsByteArrayAsync(token), token);
-            saved[category.Id] = "covers/" + file;
+            var small = await DownloadAsync(category, Width, Height, $"{category.Id}.jpg", token);
+            var large = await DownloadAsync(category, LargeWidth, LargeHeight, $"{category.Id}-large.jpg", token);
+            if (small is not null && large is not null)
+                saved[category.Id] = new Cover(small, large);
         });
         return saved;
     }
 
-    private string CopyOwnCover(string relativePath, string key)
+    /// <summary>The path from the site's root, or null when Twitch has no box art.</summary>
+    private async Task<string?> DownloadAsync(TwitchCategory category, int width, int height, string file, CancellationToken ct)
+    {
+        var url = category.BoxArtUrl.Replace("{width}", width.ToString()).Replace("{height}", height.ToString());
+        using var response = await http.GetAsync(url, ct);
+        response.EnsureSuccessStatusCode();
+        // Twitch answers a category without box art with a redirect to its placeholder.
+        if (response.RequestMessage?.RequestUri?.AbsolutePath.Contains("404_boxart") == true)
+            return null;
+
+        await File.WriteAllBytesAsync(Path.Combine(CoversDir, file), await response.Content.ReadAsByteArrayAsync(ct), ct);
+        return "covers/" + file;
+    }
+
+    /// <summary>My own picture, for both sizes.</summary>
+    private Cover CopyOwnCover(string relativePath, string key)
     {
         var source = Path.Combine(repoRoot, relativePath);
         if (!File.Exists(source))
@@ -140,7 +154,7 @@ public sealed class CoverFinder(HttpClient http, TwitchClient? twitch, string re
 
         var file = "own-" + key.Replace(' ', '-') + Path.GetExtension(source).ToLowerInvariant();
         File.Copy(source, Path.Combine(CoversDir, file), overwrite: true);
-        return "covers/" + file;
+        return new Cover("covers/" + file, "covers/" + file);
     }
 
     /// <param name="Key">The game's key, from <see cref="Names.Key"/>.</param>

@@ -9,6 +9,9 @@ public sealed record GameInfo
     /// <summary>The game's name as the site shows it.</summary>
     public required string Name { get; init; }
 
+    /// <summary>Other names my VOD titles use for the game, like "Silksong" for Hollow Knight: Silksong.</summary>
+    public IReadOnlyList<string> Aliases { get; init; } = [];
+
     /// <summary>The Twitch category's name, when it isn't the same as <see cref="Name"/>.</summary>
     public string? Twitch { get; init; }
 
