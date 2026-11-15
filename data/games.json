@@ -11,6 +11,7 @@
   { "name": "Tomb Raider", "twitchId": "220828788" },
   { "name": "Deltarune Chapter 1&2", "twitch": "Deltarune", "aliases": ["Deltarune"] },
   { "name": "Resident Evil 2", "twitchId": "293693714" },
+  { "name": "It Takes Two", "twitchId": "518213" },
   { "name": "Onryo | 怨霊", "twitchId": "1457828722" },
   { "name": "Spyro Reignited Trilogy", "cover": "data/covers/spyro-reignited-trilogy.jpg", "aliases": ["Spyro the Dragon: Reignited Trilogy"] },
   { "name": "Crash Bandicoot N. Sane Trilogy", "cover": "data/covers/crash-bandicoot-n-sane-trilogy.jpg" },
