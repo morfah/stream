@@ -22,8 +22,8 @@ public static class VodLinker
             .OfType<Game>()
             .Distinct()
             .ToList());
-        // A typo, or a game I haven't finished, which only finished games have a page for yet.
-        report.Add("Games in data/vod-fixes.json that aren't on the site, so they're left out. Check the spelling:", unknown);
+        // A typo, or a game Twitch has no category for, which needs an entry in data/games.json.
+        report.Add("Games in data/vod-fixes.json that aren't on the site, so they're left out. Check the spelling, or add the game to data/games.json:", unknown);
 
         var gamesByVod = vods.ToDictionary(vod => vod.Id, vod => fixedGames.GetValueOrDefault(vod.Id) ?? matcher.Match(vod));
 
@@ -60,7 +60,7 @@ public static class VodLinker
         foreach (var (game, list) in byGame)
             game.MissingVods = list.OrderBy(m => m.Date).ToList();
 
-        report.Add("Games in data/missing-vods.json that aren't on the site, so they're left out. Check the spelling:", unknown);
+        report.Add("Games in data/missing-vods.json that aren't on the site, so they're left out. Check the spelling, or add the game to data/games.json:", unknown);
     }
 }
 

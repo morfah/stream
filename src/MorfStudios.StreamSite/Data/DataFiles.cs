@@ -29,6 +29,12 @@ public sealed class DataFiles
     /// <summary>From <c>data/missing-vods.json</c>: streams whose VOD is lost.</summary>
     public required IReadOnlyList<MissingVod> MissingVods { get; init; }
 
+    /// <summary>
+    /// From <c>data/not-games.json</c>: pieces of VOD titles that have a Twitch category's name but aren't a game
+    /// I played, so the build doesn't make a game of them. Compared with <see cref="Names.Key"/>.
+    /// </summary>
+    public required IReadOnlySet<string> NotGames { get; init; }
+
     /// <exception cref="DataException">A file is missing or has a mistake.</exception>
     public static DataFiles Load(string repoRoot)
     {
@@ -36,6 +42,7 @@ public sealed class DataFiles
         var games = Read<List<GameInfo>>(repoRoot, "data/games.json", required: false) ?? [];
         var fixes = Read<Dictionary<string, IReadOnlyList<string>>>(repoRoot, "data/vod-fixes.json", required: false) ?? [];
         var missing = Read<List<MissingVod>>(repoRoot, "data/missing-vods.json", required: false) ?? [];
+        var notGames = Read<List<string>>(repoRoot, "data/not-games.json", required: false) ?? [];
 
         var thisYear = DateTime.UtcNow.Year;
         foreach (var game in finished)
@@ -53,7 +60,14 @@ public sealed class DataFiles
                 throw new DataException($"data/games.json: {game.Name} is in the file twice.");
         }
 
-        return new DataFiles { FinishedGames = finished, Games = byName, VodFixes = fixes, MissingVods = missing };
+        return new DataFiles
+        {
+            FinishedGames = finished,
+            Games = byName,
+            VodFixes = fixes,
+            MissingVods = missing,
+            NotGames = notGames.Select(Names.Key).ToHashSet(),
+        };
     }
 
     private static T? Read<T>(string repoRoot, string relativePath, bool required) where T : class

@@ -98,19 +98,15 @@ public sealed class CoverFinder(HttpClient http, TwitchClient? twitch, string re
     }
 
     /// <summary>
-    /// Searches for a category with the same name, ignoring case, accents and punctuation, so "ELDEN RING" finds
-    /// "Elden Ring". For names like "The Radio Station | 深夜放送", the part before the bar counts too.
+    /// Searches for a category with the same name (<see cref="TwitchCategory.SameName"/>), so "ELDEN RING" finds "Elden Ring".
+    /// For names like "The Radio Station | 深夜放送", the part before the bar is searched for too.
     /// </summary>
     private static async Task<string?> SearchAsync(TwitchClient twitch, string name, CancellationToken ct)
     {
-        var firstPart = name.Split(" | ")[0];
-        var wanted = new HashSet<string> { Names.Key(name), Names.Key(firstPart) };
-        wanted.Remove("");
-
-        foreach (var query in new[] { name, firstPart, Names.Key(name) }.Distinct().Where(q => q.Length > 0))
+        var queries = new[] { name, TwitchCategory.FirstPart(name), Names.Key(name) };
+        foreach (var query in queries.Distinct(StringComparer.OrdinalIgnoreCase).Where(q => q.Length > 0))
         {
-            var match = (await twitch.SearchAsync(query, ct)).FirstOrDefault(c => wanted.Contains(Names.Key(c.Name)));
-            if (match is not null)
+            if (TwitchCategory.SameName(await twitch.SearchAsync(query, ct), name) is { } match)
                 return match.Id;
         }
         return null;

@@ -53,25 +53,38 @@ try
     EmptyFolder(siteDir);
     CopyFolder(Path.Combine(repoRoot, "site"), siteDir);
 
-    var games = Game.FromData(data);
-    var covers = await new CoverFinder(http, twitch, repoRoot, siteDir, report)
-        .FindAsync(games.Select(g => g.Name), data.Games, ct);
-    foreach (var game in games)
-        game.Cover = covers.GetValueOrDefault(game.Key);
-
     var vods = await LoadVodsAsync(youTube, report);
+    var games = Game.FromData(data);
+    games.AddRange(await GameFinder.FindAsync(twitch, vods, games, data, report, ct));
     var links = VodLinker.Link(vods, games, data.VodFixes, report);
     VodLinker.AddMissing(games, data.MissingVods, report);
+    var onSite = games.Where(g => g.HasPage).ToList();
+
+    // Found games have their Twitch category already.
+    var info = new Dictionary<string, GameInfo>(data.Games);
+    foreach (var game in onSite.Where(g => g.Found is not null))
+        info[game.Key] = new GameInfo { Name = game.Name, TwitchId = game.Found!.Category.Id };
+    var covers = await new CoverFinder(http, twitch, repoRoot, siteDir, report).FindAsync(onSite.Select(g => g.Name), info, ct);
+    foreach (var game in onSite)
+        game.Cover = covers.GetValueOrDefault(game.Key);
+
+    var finished = games.Where(g => g.IsFinished).ToList();
+    report.Add("Games in data/games.json that no VOD title names, so they aren't on the site. Check the spelling, or add other names:",
+        games.Where(g => !g.IsFinished && g.Found is null && !g.Hidden && !g.HasPage).Select(g => g.Name));
     report.Add("Games", [
-        $"{games.Count(g => g.Vods.Count > 0)} of {games.Count} games have VODs.",
+        $"{finished.Count(g => g.Vods.Count > 0)} of {finished.Count} finished games have VODs.",
+        $"{onSite.Count(g => g.List == GameList.Unfinished)} unfinished and {onSite.Count(g => g.List == GameList.Multiplayer)} multiplayer games, " +
+            $"{onSite.Count(g => g.Found is not null)} of them found on Twitch from the VOD titles. They're on {ReviewPage.File}.",
         $"{vods.Count(v => links.GamesByVod[v.Id].Count > 0)} of {vods.Count} VODs have a game, {links.Fixed.Count} of them fixed by hand. The rest are on {ReviewPage.File}.",
     ]);
 
     var updated = DateOnly.FromDateTime(DateTime.UtcNow);
     await WritePageAsync(FinishedPage.File, FinishedPage.Render(data.FinishedGames, games.ToDictionary(g => g.Key), updated));
+    await WritePageAsync(PlayedPage.UnfinishedFile, PlayedPage.Render(GameList.Unfinished, onSite, updated));
+    await WritePageAsync(PlayedPage.MultiplayerFile, PlayedPage.Render(GameList.Multiplayer, onSite, updated));
     await WritePageAsync(VodsPage.File, VodsPage.Render(vods, updated));
     await WritePageAsync(ReviewPage.File, ReviewPage.Render(games, vods, links, updated));
-    foreach (var game in games)
+    foreach (var game in onSite)
         await WritePageAsync(GamePage.FileFor(game), GamePage.Render(game, updated));
 
     async Task WritePageAsync(string path, string html)

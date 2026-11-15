@@ -22,5 +22,29 @@
   { "name": "Five Nights at Freddy's 3", "aliases": ["FNAF 3", "FNAF3"] },
   { "name": "Five Nights at Freddy's", "twitchId": "418063", "aliases": ["FNAF 1", "FNAF 4/20"] },
   { "name": "StarCraft II: Legacy of the Void", "twitch": "StarCraft II" },
-  { "name": "Warhammer: Vermintide 2", "aliases": ["Vermintide 2"] }
+  { "name": "Warhammer: Vermintide 2", "aliases": ["Vermintide 2"] },
+  { "name": "A Hat in Time", "aliases": ["Hat in Time"] },
+
+  // Played, not finished. Most of those games are found in the VOD titles by themselves. These need help.
+  { "name": "L.A. Noire", "twitchId": "19589" },
+  { "name": "System Shock", "twitchId": "516082" },
+  { "name": "Klonoa: Door to Phantomile", "twitchId": "8753" },
+  { "name": "Tomb Raider II", "aliases": ["Tomb Raider 2"] },
+  { "name": "Grand Theft Auto", "aliases": ["GTA 1", "GTA1"] },
+
+  // Games without an ending, on Multiplayer.
+  { "name": "Apex Legends", "multiplayer": true },
+  { "name": "Valorant", "multiplayer": true },
+  { "name": "Overwatch 2", "twitch": "Overwatch", "multiplayer": true },
+  { "name": "League of Legends", "aliases": ["LoL"], "multiplayer": true },
+  { "name": "Counter-Strike: Global Offensive", "twitch": "Counter-Strike", "aliases": ["CSGO", "CS:GO"], "multiplayer": true },
+  { "name": "Halo Infinite", "multiplayer": true },
+  { "name": "Battlefield 2042", "multiplayer": true },
+  { "name": "Battlefield 6", "multiplayer": true },
+  { "name": "Xonotic", "aliases": ["PCLizard", "WB semi final"], "multiplayer": true },
+  { "name": "Nexuiz", "multiplayer": true },
+  { "name": "Gartic Phone", "multiplayer": true },
+  { "name": "Steep", "multiplayer": true },
+  { "name": "Phasmophobia", "multiplayer": true },
+  { "name": "GTFO", "multiplayer": true }
 ]

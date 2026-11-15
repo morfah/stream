@@ -25,10 +25,11 @@ public static class Layout
 {
     public const string SiteUrl = "https://morfah.github.io/stream/";
 
-    /// <summary>The menu. Later steps add Unfinished and Multiplayer.</summary>
     private static readonly (string Href, string Label)[] Menu =
     [
         ("./", "Finished"),
+        (PlayedPage.UnfinishedFile, "Unfinished"),
+        (PlayedPage.MultiplayerFile, "Multiplayer"),
         (VodsPage.File, "VOD archive"),
     ];
 

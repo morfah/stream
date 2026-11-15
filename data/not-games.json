@@ -1,0 +1,13 @@
+// Pieces of VOD titles that have the same name as a Twitch category, but aren't a game I played.
+// The build doesn't make a game of them. Case and punctuation don't matter.
+// The games the build found, and the pieces they came from, are on review.html.
+[
+  "Beat the game", // Risk of Rain 2 - Part 5 - [CO-OP] Beat the game
+  "Birthday",      // Birthday 🥳 | Learning Quake speedrunning
+  "Cooking",       // Cooking, Pokémon card pack opening
+  "Duel",          // Xonotic Duel: PCLizard VS Fisume
+  "later",         // CULTIC & Scorn later!
+  "Sliding",       // Game development - Sliding and crouching
+  "speedrun",      // News, Tomb Raider 1, Celeste speedrun, Figment
+  "stream",        // Random drunk(ish) stream
+]

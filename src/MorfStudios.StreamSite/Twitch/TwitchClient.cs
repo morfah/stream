@@ -81,6 +81,24 @@ public sealed class TwitchClient(HttpClient http, string clientId, string client
 }
 
 /// <summary>A Twitch game category. <see cref="BoxArtUrl"/> has <c>{width}</c> and <c>{height}</c> to fill in.</summary>
-public sealed record TwitchCategory(string Id, string Name, [property: JsonPropertyName("box_art_url")] string BoxArtUrl);
+public sealed record TwitchCategory(string Id, string Name, [property: JsonPropertyName("box_art_url")] string BoxArtUrl)
+{
+    /// <summary>
+    /// The first category with the same name, ignoring case, accents and punctuation, so "ELDEN RING" is "Elden Ring".
+    /// The part before a bar counts too, on either side: "The Bathhouse" is "The Bathhouse | 地獄銭湯♨️".
+    /// A whole name that's the same comes first.
+    /// </summary>
+    public static TwitchCategory? SameName(IEnumerable<TwitchCategory> categories, string name)
+    {
+        var wanted = new HashSet<string> { Names.Key(name), Names.Key(FirstPart(name)) };
+        wanted.Remove("");
+        var list = categories as IReadOnlyCollection<TwitchCategory> ?? categories.ToList();
+        return list.FirstOrDefault(c => wanted.Contains(Names.Key(c.Name)))
+            ?? list.FirstOrDefault(c => wanted.Contains(Names.Key(FirstPart(c.Name))));
+    }
+
+    /// <summary>"The Radio Station" for "The Radio Station | 深夜放送".</summary>
+    public static string FirstPart(string name) => name.Split(" | ")[0];
+}
 
 public sealed class TwitchException(string message) : Exception(message);

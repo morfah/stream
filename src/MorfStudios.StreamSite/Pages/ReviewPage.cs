@@ -16,7 +16,8 @@ public static class ReviewPage
     public static string Render(IReadOnlyList<Game> games, IReadOnlyList<Vod> vods, VodLinks links, DateOnly updated)
     {
         // A game whose only VODs are missing is explained already.
-        var withoutVods = games.Where(g => g.Vods.Count == 0 && g.MissingVods.Count == 0).ToList();
+        var withoutVods = games.Where(g => g.IsFinished && g.Vods.Count == 0 && g.MissingVods.Count == 0).ToList();
+        var found = games.Where(g => g.Found is not null && g.HasPage).ToList();
         var missing = games.SelectMany(g => g.MissingVods.Select(m => (Missing: m, Game: g))).OrderBy(m => m.Missing.Date).ToList();
         var withoutGame = vods.Where(v => links.GamesByVod[v.Id].Count == 0).ToList();
         var several = vods.Where(v => links.GamesByVod[v.Id].Count > 1).ToList();
@@ -40,6 +41,10 @@ public static class ReviewPage
 
         Section(body, "Finished games without VODs", "No VOD title names these. Their streams may have titles like \"Short indie games\".",
             withoutVods.Select(g => $"""<li><a href="{E(g.Path)}">{E(g.Name)}</a></li>"""));
+        Section(body, "Games found on Twitch",
+            "Pieces of VOD titles with the same name as a Twitch category. Not a game I played? Put the piece in data/not-games.json. " +
+            "The wrong game, like the remake instead of the original? Add it to data/games.json with its twitchId. Multiplayer? Add it with \"multiplayer\": true.",
+            found.Select(g => $"""<li><a href="{E(g.Path)}">{E(g.Name)}</a> <span class="date">{E(Plural(g.Vods.Count, "VOD"))}</span> from {string.Join(", ", g.Found!.Pieces.Select(p => $"<code>{E(p)}</code>"))} <span class="games">Twitch ID {E(g.Found.Category.Id)}</span></li>"""));
         Section(body, "VODs with several games", "Right when I played several games that stream.",
             several.Select(v => Row(v, string.Join(", ", links.GamesByVod[v.Id].Select(g => g.Name)))));
         Section(body, "VODs without a game", "Fine for game dev, events and other streams without a game.",

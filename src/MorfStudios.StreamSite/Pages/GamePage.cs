@@ -15,7 +15,13 @@ public static class GamePage
     {
         var status = Status(game);
         var description = game.Vods.Count > 0 ? $"{status}. {Plural(game.Vods.Count, "VOD")} on YouTube." : $"{status}.";
-        var page = new PageInfo(FileFor(game), "./", $"{game.Name} · Morfah's VODs", description, updated)
+        var (list, back) = game.List switch
+        {
+            GameList.Unfinished => (PlayedPage.UnfinishedFile, "← All unfinished games"),
+            GameList.Multiplayer => (PlayedPage.MultiplayerFile, "← All multiplayer games"),
+            _ => ("./", "← All finished games"),
+        };
+        var page = new PageInfo(FileFor(game), list, $"{game.Name} · Morfah's VODs", description, updated)
         {
             Script = "site.js",
             Image = game.Cover?.Large,
@@ -35,7 +41,7 @@ public static class GamePage
                 <section class="game-hero">
                   <div class="backdrop"{backdrop}></div>
                   <div class="wrap">
-                    <a class="back" href="{page.Link("./")}">← All finished games</a>
+                    <a class="back" href="{page.Link(list)}">{back}</a>
                     <div class="game-head">
                       {cover}
                       <div class="game-info">
@@ -88,9 +94,15 @@ public static class GamePage
         return Layout.Page(page, body.ToString());
     }
 
-    /// <summary>Like "Finished on stream in 2022 and 2023".</summary>
+    /// <summary>Like "Finished on stream in 2022 and 2023", or "Last played on stream in 2025 · not finished yet".</summary>
     private static string Status(Game game)
     {
+        var lastPlayed = game.LastPlayed?.Year.ToString(CultureInfo.InvariantCulture);
+        if (game.List == GameList.Multiplayer)
+            return $"Multiplayer · last played on stream in {lastPlayed}";
+        if (game.List == GameList.Unfinished)
+            return $"Last played on stream in {lastPlayed} · not finished yet";
+
         var years = game.Finishes.Select(f => f.Year).Distinct().Order().Select(y => y.ToString(CultureInfo.InvariantCulture)).ToArray();
         var list = years.Length == 1 ? years[0] : string.Join(", ", years[..^1]) + " and " + years[^1];
         return $"Finished on stream in {list}";
