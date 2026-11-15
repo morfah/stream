@@ -313,6 +313,25 @@ img { display: block; max-width: 100%; }
 .player .now { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 14px; }
 .player .now h2 { margin: 0; font-size: 20px; flex: 1; min-width: 200px; }
 
+/* The VOD archive's player, over the page. As wide as fits without the video getting cut off. */
+.player-dialog {
+  width: min(1100px, 100% - 32px, (100dvh - 150px) * 16 / 9);
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  overflow: auto;
+  box-shadow: 0 30px 80px -20px rgb(255 45 149 / 0.35);
+}
+.player-dialog::backdrop { background: rgb(6 5 9 / 0.8); backdrop-filter: blur(6px); }
+.player-dialog .frame { aspect-ratio: 16 / 9; background: #000; }
+.player-dialog iframe { width: 100%; height: 100%; border: 0; display: block; }
+.player-dialog .now { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 14px 18px; }
+.player-dialog .now h2 { margin: 0; font-size: 18px; flex: 1; min-width: 200px; }
+body:has(.player-dialog[open]) { overflow: hidden; }
+
 .section-head { display: flex; align-items: baseline; gap: 14px; margin: 8px 0 18px; }
 .section-head h2 { margin: 0; font: 800 28px/1.1 var(--font-display); }
 .section-head span { color: var(--muted); font-weight: 600; }
@@ -325,6 +344,7 @@ img { display: block; max-width: 100%; }
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 22px 18px;
 }
+.year .vods { margin-bottom: 8px; }
 .vod {
   display: block;
   width: 100%;
@@ -332,6 +352,7 @@ img { display: block; max-width: 100%; }
   border: 0;
   background: none;
   color: inherit;
+  text-decoration: none;
   text-align: left;
   font: inherit;
   cursor: pointer;

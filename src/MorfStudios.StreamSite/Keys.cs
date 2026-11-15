@@ -7,7 +7,7 @@ namespace MorfStudios.StreamSite;
 /// API keys. GitHub Actions passes them as environment variables from the repo secrets.
 /// On my PC they come from <c>keys.local.json</c>, which git ignores.
 /// </summary>
-public sealed record Keys(string? TwitchClientId, string? TwitchClientSecret)
+public sealed record Keys(string? TwitchClientId, string? TwitchClientSecret, string? YouTubeApiKey)
 {
     public const string LocalFile = "keys.local.json";
 
@@ -24,7 +24,7 @@ public sealed record Keys(string? TwitchClientId, string? TwitchClientSecret)
             return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
         }
 
-        return new Keys(Get("TWITCH_CLIENT_ID"), Get("TWITCH_CLIENT_SECRET"));
+        return new Keys(Get("TWITCH_CLIENT_ID"), Get("TWITCH_CLIENT_SECRET"), Get("YOUTUBE_API_KEY"));
     }
 
     private static Dictionary<string, string> ReadLocalFile(string path)
