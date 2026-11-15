@@ -23,6 +23,7 @@
   { "name": "StarCraft II: Legacy of the Void", "twitch": "StarCraft II" },
   { "name": "Warhammer: Vermintide 2", "aliases": ["Vermintide 2"] },
   { "name": "A Hat in Time", "aliases": ["Hat in Time"] },
+  { "name": "Little Nightmares - Secrets of The Maw", "twitch": "Little Nightmares", "aliases": ["Little Nightmares [DLC]"] },
 
   // Played, not finished. Most of those games are found in the VOD titles by themselves. These need help.
   { "name": "L.A. Noire", "twitchId": "19589" },
