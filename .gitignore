@@ -1,0 +1,14 @@
+# The built site
+_site/
+
+# Build output and Visual Studio's own files
+bin/
+obj/
+.vs/
+*.user
+
+# My keys for builds on my PC. GitHub Actions gets them from the repo secrets.
+keys.local.json
+
+# Claude Code's local preview settings
+.claude/

@@ -1,0 +1,19 @@
+[
+  { "name": "The Evil Within: The Executioner", "twitch": "The Evil Within" },
+  { "name": "The Evil Within: The Consequence", "twitch": "The Evil Within" },
+  { "name": "The Evil Within: The Assignment", "twitch": "The Evil Within" },
+  { "name": "Horizon Zero Dawn - The Frozen Wilds DLC", "twitch": "Horizon Zero Dawn" },
+  { "name": "Astro's Playground", "twitch": "Astro's Playroom" },
+  { "name": "The Room: Old Sins", "twitch": "The Room 4: Old Sins" },
+  { "name": "Tomb Raider", "twitchId": "220828788" },
+  { "name": "Deltarune Chapter 1&2", "twitch": "Deltarune" },
+  { "name": "Resident Evil 2", "twitchId": "293693714" },
+  { "name": "Onryo", "twitchId": "1457828722" },
+  { "name": "Spyro Reignited Trilogy", "cover": "data/covers/spyro-reignited-trilogy.jpg" },
+  { "name": "Crash Bandicoot N. Sane Trilogy", "cover": "data/covers/crash-bandicoot-n-sane-trilogy.jpg" },
+  { "name": "Fall Guys: Ultimate Knockout", "twitch": "Fall Guys" },
+  { "name": "Sonic Mania - Encore DLC", "twitch": "Sonic Mania" },
+  { "name": "Five Nights at Freddy's 4: The Final Chapter", "twitchId": "489567" },
+  { "name": "Five Nights at Freddy's", "twitchId": "418063" },
+  { "name": "StarCraft II: Legacy of the Void", "twitch": "StarCraft II" }
+]
