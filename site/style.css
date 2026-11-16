@@ -274,9 +274,13 @@ img { display: block; max-width: 100%; }
 .game-head h1 { margin: 0; font: 800 clamp(32px, 5vw, 56px)/1.05 var(--font-display); letter-spacing: -0.02em; text-wrap: balance; }
 .facts { display: flex; flex-wrap: wrap; gap: 8px 22px; list-style: none; margin: 16px 0 0; padding: 0; color: var(--muted); font-weight: 600; }
 .facts strong { color: var(--text); }
-.game-head .badges { position: static; margin-top: 16px; }
+.game-head .badges { position: static; margin-top: 16px; align-items: flex-start; }
 .game-head .badge { font-size: 13px; padding: 6px 10px; text-decoration: none; }
 .game-head a.badge:hover { border-color: #a970ff; }
+/* A party can be long, so it wraps between names on phones, as high as the other badges on one line. Names with a Twitch link are underlined. */
+.game-head .badge.coop { white-space: normal; line-height: 19px; padding-block: 3px; border-radius: 14px; }
+.badge.coop a { color: inherit; white-space: nowrap; text-decoration: underline 1px #a970ff; text-underline-offset: 3px; }
+.badge.coop a:hover { color: #a970ff; }
 .game-head .badges:empty { display: none; }
 
 .placeholder {
@@ -350,6 +354,10 @@ body:has(.player-dialog[open]) { overflow: hidden; }
 .section-head { display: flex; align-items: baseline; gap: 14px; margin: 8px 0 18px; }
 .section-head h2 { margin: 0; font: 800 28px/1.1 var(--font-display); }
 .section-head span { color: var(--muted); font-weight: 600; }
+/* A game played more than once has its VODs under a heading for each playthrough. */
+.playthrough-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin: 0 0 14px; padding-top: 6px; }
+.playthrough-head h3 { margin: 0; font: 750 21px/1.2 var(--font-display); }
+.playthrough-head span { color: var(--muted); font-weight: 600; font-size: 14px; }
 
 .vods {
   list-style: none;

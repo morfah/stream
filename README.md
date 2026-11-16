@@ -8,21 +8,29 @@ A C# program builds the pages from the files in `data`, my VODs on YouTube and g
 
 Edit these by hand, on GitHub or on my PC. A mistake in a file stops the build and the Actions run says where, so the live site stays as it was.
 
-- `data/finished-games.json`: the games I've finished. `date` is the day I got the credits, and `hundredPercent` the day I got every achievement or trophy, if I did. One line per playthrough, so a game finished twice with different friends has two lines. The site sorts them by date, newest first, so a new line can go anywhere in the file:
+- `data/finished-games.json`: the games I've finished. `date` is the day I got the credits, and `hundredPercent` the day I got every achievement or trophy, if I did. `coop` is who I played it with: one name, or a list for a party, like `["franticalle", "Nyakuzaa"]`. One line per playthrough, so a game finished twice with different friends has two lines, and `started` can say when the second one started (see [Playthroughs](#playthroughs)). The site sorts them by date, newest first, so a new line can go anywhere in the file:
   ```json
   { "date": "2025-10-14", "name": "Hollow Knight: Silksong" },
   { "date": "2024-01-25", "name": "Resident Evil 6", "coop": "franticalle" },
   { "date": "2022-12-03", "name": "God of War Ragnarök", "hundredPercent": "2023-01-28", "difficulty": "Hardest" },
   ```
   On the game's page and in the VOD archive, its last VOD on each of those days gets a 🏁 Finished or 🏆 100% badge. The dates before November 2026 were guessed from the VOD titles (FINALE, THE END, Credits, 100%, Platinum), otherwise the game's last VOD that year, and then checked by hand.
-- `data/games.json`: only for games that need help finding their cover or their VODs, or that are multiplayer or hidden. A game here that isn't finished is on Unfinished or Multiplayer once a VOD title names it.
+- `data/games.json`: only for games that need help finding their cover or their VODs, or that are multiplayer, co-op or hidden. A game here that isn't finished is on Unfinished or Multiplayer once a VOD title names it.
   - `twitch`: the Twitch category's name, when it isn't the game's name.
   - `twitchId`: the Twitch category's ID, when several share a name, like an old game and its remake.
   - `cover`: my own picture in the repo, like `data/covers/game.jpg`, when Twitch has none.
   - `aliases`: other names my VOD titles use for the game, like `["Silksong"]` for Hollow Knight: Silksong.
   - `multiplayer`: `true` for a game without an ending, like Apex Legends. It's on Multiplayer instead of Unfinished. One I'm done with, like Splitgate, goes in the finished list too, and is on both Finished and Multiplayer.
+  - `coop`: who I played the playthrough I haven't finished with, like in the finished list: `"Nyakuzaa"` for DEVOUR, or everyone from every stream, like `["franticalle", "Nyakuzaa", "Atahree", "Drast0n"]` for Phasmophobia. For a finished game, that's a playthrough after the finish, like Valheim co-op after my solo one, so it needs `started`. The finished playthroughs' partners go on their lines in the finished list.
+  - `started`: for a finished game, the day a playthrough I haven't finished started, like `"2022-02-16"` for Valheim co-op. It adds that playthrough to the game.
   - `hidden`: `true` for a game I don't want listed. It's not on Unfinished or Multiplayer and has no page, but its VODs stay in the archive.
   - `category`: `true` for a kind of stream that isn't a game, like `Software and Game Development` or `IRL`. It has a page like a game, listed on Other instead of Unfinished. Its VODs come from `data/vod-fixes.json` or other names.
+- `data/coop-partners.json`: everyone I play co-op with. `coop` in the other files names them as `name` does here, so a misspelled name stops the build. `twitch` is their Twitch name, when they have a channel, and the site links to it:
+  ```json
+  { "name": "Nyakuzaa", "twitch": "Nyakuzaa" },
+  { "name": "Atahree" },
+  ```
+  Co-op games get a Co-op badge and a "Co-op with …" note on Finished, Unfinished and Multiplayer, where the Co-op filter finds them. The game's page lists everyone I played it with.
 - `data/not-games.json`: pieces of VOD titles that have a Twitch category's name but aren't a game I played, like `"Birthday"` in `Birthday 🥳 | Learning Quake speedrunning`.
 - `data/vod-fixes.json`: VODs whose titles don't name their games, or name the wrong ones. A VOD's ID and the games it really has, which replaces what its title gives. `[]` means no game:
   ```json
@@ -55,6 +63,21 @@ A VOD is on a game's page when the game's name, or one of its `aliases`, is in t
 ```
 dotnet run --project src/MorfStudios.StreamSite -- vods silksong
 ```
+
+## Playthroughs
+
+Each line in the finished list is a playthrough, and so is a game I haven't finished, or a finished one I'm playing again with `started` in `data/games.json`. A game with more than one has its VODs split by playthrough on its page, each with who I played with and how it ended:
+
+```json
+// data/finished-games.json
+{ "date": "2021-04-05", "name": "Valheim" },
+// data/games.json
+{ "name": "Valheim", "started": "2022-02-16", "coop": "franticalle" },
+```
+
+Valheim's page then has the solo playthrough's VODs, then the co-op one's. It's on Finished for the solo one and on Unfinished for the co-op one, whose card counts only its VODs. With `"multiplayer": true`, it's on Multiplayer instead of Unfinished.
+
+The VODs are split by day: a playthrough has them from its start until the next one starts, so VODs after the credits, like Valheim's exploring, stay with it. A finished playthrough starts on its `started` day, otherwise the day after the one before it finished, like We Were Here Forever's second one.
 
 ## Unfinished and multiplayer games
 

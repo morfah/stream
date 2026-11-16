@@ -10,11 +10,21 @@ public sealed record FinishedGame
 
     public required string Name { get; init; }
 
+    /// <summary>
+    /// The day the playthrough started, for a game played more than once, when its VODs don't start the day after the
+    /// playthrough before it finished. Its page splits the VODs by playthrough.
+    /// </summary>
+    public DateOnly? Started { get; init; }
+
     /// <summary>The day I got every achievement or trophy, if I did. The same day as <see cref="Date"/> or later.</summary>
     public DateOnly? HundredPercent { get; init; }
 
-    /// <summary>The Twitch name of who I played it with.</summary>
-    public string? Coop { get; init; }
+    /// <summary>
+    /// Who I played it with, by their names in <c>data/coop-partners.json</c>: one name, or a list for a party.
+    /// After loading, written as that file does. Empty when I played alone.
+    /// </summary>
+    [JsonConverter(typeof(OneOrManyConverter))]
+    public IReadOnlyList<string> Coop { get; init; } = [];
 
     /// <summary>Shown as "<c>Difficulty</c> difficulty", like Hardest or Nightmare.</summary>
     public string? Difficulty { get; init; }

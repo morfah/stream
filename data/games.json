@@ -37,6 +37,11 @@
   { "name": "Yuki Onna | 雪女", "twitchId": "1847144098" },
   { "name": "Hanako | 花子さん", "twitchId": "216385978" },
 
+  // Played co-op, not finished. "coop" is who with, by their names in data/coop-partners.json: one name, or a list.
+  { "name": "DEVOUR", "coop": "Nyakuzaa" },
+  // Finished solo, then a co-op playthrough I haven't finished, from the day in "started". On Finished and Unfinished.
+  { "name": "Valheim", "started": "2022-02-16", "coop": "franticalle" },
+
   // Games without an ending, on Multiplayer. Finished ones, like Splitgate and Fall Guys, are on Finished too.
   { "name": "Splitgate", "multiplayer": true },
   { "name": "Apex Legends", "multiplayer": true },
@@ -51,7 +56,7 @@
   { "name": "Nexuiz", "multiplayer": true },
   { "name": "Gartic Phone", "multiplayer": true },
   { "name": "Steep", "multiplayer": true },
-  { "name": "Phasmophobia", "multiplayer": true },
+  { "name": "Phasmophobia", "multiplayer": true, "coop": ["franticalle", "Nyakuzaa", "Atahree", "Drast0n"] },
   { "name": "GTFO", "multiplayer": true },
 
   // Not games but kinds of streams, like game dev and IRL, on the Other page.

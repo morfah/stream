@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace MorfStudios.StreamSite.Data;
 
 /// <summary>
@@ -21,6 +23,20 @@ public sealed record GameInfo
     /// instead of Unfinished.
     /// </summary>
     public bool Category { get; init; }
+
+    /// <summary>
+    /// Who I played the playthrough I haven't finished with, like <c>coop</c> in the finished list. For a finished game,
+    /// that's one after the finish, like Valheim co-op after my solo one, so it needs <see cref="Started"/>. The finished
+    /// ones' partners go on their lines in the finished list.
+    /// </summary>
+    [JsonConverter(typeof(OneOrManyConverter))]
+    public IReadOnlyList<string> Coop { get; init; } = [];
+
+    /// <summary>
+    /// The day the playthrough I haven't finished started. For a finished game, it adds that playthrough, which has the
+    /// VODs from that day on.
+    /// </summary>
+    public DateOnly? Started { get; init; }
 
     /// <summary>Other names my VOD titles use for the game, like "Silksong" for Hollow Knight: Silksong.</summary>
     public IReadOnlyList<string> Aliases { get; init; } = [];

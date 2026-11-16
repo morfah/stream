@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using MorfStudios.StreamSite.Data;
 using MorfStudios.StreamSite.Games;
 using MorfStudios.StreamSite.Vods;
 using static MorfStudios.StreamSite.Pages.Html;
@@ -38,6 +39,8 @@ public static class GamePage
                         <div class="actions"><a class="btn primary" href="{E(first.WatchUrl)}" data-play-first>▶ {(game.Vods.Count == 1 ? "Watch the VOD" : "Watch from the start")}</a></div>
             """.TrimEnd();
 
+        // A game played more than once, like Valheim solo and then co-op, has a list for each playthrough.
+        var split = game.Playthroughs.Count > 1 && (game.Vods.Count > 0 || game.MissingVods.Count > 0);
         var body = new StringBuilder($"""
                 <section class="game-hero">
                   <div class="backdrop"{backdrop}></div>
@@ -56,35 +59,26 @@ public static class GamePage
                 </section>
 
                 <div class="wrap">
-                  <div class="section-head"><h2>VODs</h2><span>oldest first</span></div>
+                  <div class="section-head"><h2>VODs</h2><span>{(split ? "by playthrough, oldest first" : "oldest first")}</span></div>
 
             """);
 
-        if (game.Vods.Count == 0 && game.MissingVods.Count == 0)
+        if (!split)
         {
-            body.Append("""
-                      <p class="placeholder">No VODs of this game yet.</p>
-
-                """);
+            body.Append(VodList(game, game.Vods, game.MissingVods, "No VODs of this game yet."));
         }
         else
         {
-            body.Append("""
-                      <ol class="vods" data-sequence>
+            // Each playthrough has its own list, so "Next part" stops at its end.
+            foreach (var playthrough in game.Playthroughs)
+            {
+                var (vods, missing) = (game.VodsOf(playthrough), game.MissingVodsOf(playthrough));
+                body.Append($"""
+                          <div class="playthrough-head"><h3>{Who(playthrough)}</h3><span>{Outcome(playthrough)} · {GameCards.VodsNote(vods, missing)}</span></div>
 
-                """);
-            // Missing VODs in date order between the others, after those of the same day.
-            var cards = game.Vods.Select((vod, i) => (vod.Date, Sort: i, Html: VodCards.Card(vod, VodCards.Milestones([(game, game.MilestonesOf(vod))]))))
-                .Concat(game.MissingVods.Select((missing, i) => (missing.Date, Sort: game.Vods.Count + i,
-                    Html: VodCards.MissingCard(missing, game, VodCards.Milestones([(game, game.MilestonesOf(missing))])))))
-                .OrderBy(card => card.Date)
-                .ThenBy(card => card.Sort);
-            foreach (var card in cards)
-                body.Append(card.Html);
-            body.Append("""
-                      </ol>
-
-                """);
+                    """);
+                body.Append(VodList(game, vods, missing, "No VODs of this playthrough."));
+            }
         }
 
         body.Append($"""
@@ -94,6 +88,47 @@ public static class GamePage
             """);
 
         return Layout.Page(page, body.ToString());
+    }
+
+    /// <summary>The VOD cards, with the missing VODs in date order between the others, after those of the same day.</summary>
+    /// <param name="empty">Shown when there are none.</param>
+    private static string VodList(Game game, IReadOnlyList<Vod> vods, IReadOnlyList<MissingVod> missing, string empty)
+    {
+        if (vods.Count == 0 && missing.Count == 0)
+        {
+            return $"""
+                      <p class="placeholder">{empty}</p>
+
+                """;
+        }
+
+        var cards = vods.Select((vod, i) => (vod.Date, Sort: i, Html: VodCards.Card(vod, VodCards.Milestones([(game, game.MilestonesOf(vod))]))))
+            .Concat(missing.Select((lost, i) => (lost.Date, Sort: vods.Count + i,
+                Html: VodCards.MissingCard(lost, game, VodCards.Milestones([(game, game.MilestonesOf(lost))])))))
+            .OrderBy(card => card.Date)
+            .ThenBy(card => card.Sort);
+        return """
+                      <ol class="vods" data-sequence>
+
+                """ + string.Concat(cards.Select(card => card.Html)) + """
+                      </ol>
+
+                """;
+    }
+
+    /// <summary>"Solo playthrough", or "Co-op with franticalle and Nyakuzaa".</summary>
+    private static string Who(Playthrough playthrough) =>
+        playthrough.Coop.Count > 0 ? $"Co-op with {And(playthrough.Coop.Select(p => E(p.Name)))}" : "Solo playthrough";
+
+    /// <summary>Like "Finished on 5 Apr 2021", "Finished at 100% on 2 Feb 2024 · Hardest difficulty", or "Not finished yet".</summary>
+    private static string Outcome(Playthrough playthrough)
+    {
+        if (playthrough.Finish is not { } finish)
+            return "Not finished yet";
+        var outcome = finish.HundredPercent == finish.Date ? $"Finished at 100% on {Days([finish.Date])}"
+            : finish.HundredPercent is { } hundred ? $"Finished on {Days([finish.Date])} · 100% on {Days([hundred])}"
+            : $"Finished on {Days([finish.Date])}";
+        return finish.Difficulty is { } difficulty ? $"{outcome} · {E(difficulty)} difficulty" : outcome;
     }
 
     /// <summary>
@@ -121,18 +156,19 @@ public static class GamePage
     }
 
     /// <summary>Like "20 Apr 2022", or "24 Feb 2023 and 2 Feb 2024".</summary>
-    private static string Days(IEnumerable<DateOnly> days)
-    {
-        var list = days.Distinct().Order().Select(d => d.ToString("d MMM yyyy", CultureInfo.InvariantCulture)).ToArray();
-        return list.Length == 1 ? list[0] : string.Join(", ", list[..^1]) + " and " + list[^1];
-    }
+    private static string Days(IEnumerable<DateOnly> days) =>
+        And(days.Distinct().Order().Select(d => d.ToString("d MMM yyyy", CultureInfo.InvariantCulture)));
 
     private static string Badges(Game game) => string.Concat(
         game.Finishes.Any(f => f.HundredPercent is not null) ? """<span class="badge gold">🏆 100%</span>""" : "",
-        string.Concat(game.Finishes.Select(f => f.Coop).OfType<string>().Distinct().Select(coop =>
-            $"""<a class="badge" href="https://www.twitch.tv/{Uri.EscapeDataString(coop)}">Co-op with {E(coop)}</a>""")),
+        game.Coop.Count > 0 ? $"""<span class="badge coop">Co-op with {And(game.Coop.Select(Partner))}</span>""" : "",
         string.Concat(game.Finishes.Select(f => f.Difficulty).OfType<string>().Distinct().Select(difficulty =>
             $"""<span class="badge">💀 {E(difficulty)} difficulty</span>""")));
+
+    /// <summary>A link to their Twitch channel, or only their name when they don't have one.</summary>
+    private static string Partner(CoopPartner partner) => partner.TwitchUrl is { } url
+        ? $"""<a href="{E(url)}" title="{E(partner.Name)} on Twitch">{E(partner.Name)}</a>"""
+        : E(partner.Name);
 
     /// <summary>How many VODs, how long, and when, and how many are missing.</summary>
     private static string Facts(Game game)

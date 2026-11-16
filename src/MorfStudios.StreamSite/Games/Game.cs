@@ -41,6 +41,18 @@ public sealed class Game
     /// <summary>Marked <c>category</c> in <c>data/games.json</c>: a kind of stream, like IRL, not a game.</summary>
     public bool Category { get; init; }
 
+    /// <summary>
+    /// Oldest first: one for each line in the finished list, and one I haven't finished, for a game I haven't finished or
+    /// one I'm playing again, like Valheim co-op. A game found in the VOD titles is one playthrough I haven't finished.
+    /// </summary>
+    public IReadOnlyList<Playthrough> Playthroughs { get; init; } = [new() { Coop = [] }];
+
+    /// <summary>The playthrough I haven't finished, if there is one.</summary>
+    public Playthrough? Unfinished => Playthroughs.FirstOrDefault(p => p.Finish is null);
+
+    /// <summary>Everyone I played it with, each once, from the oldest playthrough on. Empty when I played it alone.</summary>
+    public IReadOnlyList<CoopPartner> Coop => Playthroughs.SelectMany(p => p.Coop).Distinct().ToList();
+
     /// <summary>How the build found the game, when no data file names it.</summary>
     public FoundGame? Found { get; init; }
 
@@ -63,8 +75,26 @@ public sealed class Game
         : Multiplayer ? GameList.Multiplayer
         : GameList.Unfinished;
 
-    /// <summary>On Unfinished or Multiplayer.</summary>
-    public bool IsOn(GameList list) => list == GameList.Multiplayer ? Multiplayer && LastPlayed is not null : List == list;
+    /// <summary>
+    /// On Unfinished, Multiplayer or Other. A finished game is on Unfinished too while it has a playthrough I haven't
+    /// finished with VODs, like Valheim co-op, and a finished multiplayer game, like Splitgate, is on Multiplayer too.
+    /// </summary>
+    public bool IsOn(GameList list) => list switch
+    {
+        GameList.Multiplayer => Multiplayer && LastPlayed is not null,
+        GameList.Unfinished => !Category && !Multiplayer && !Hidden && Unfinished is { } unfinished
+            && (VodsOf(unfinished).Count > 0 || MissingVodsOf(unfinished).Count > 0),
+        _ => List == list,
+    };
+
+    /// <summary>Oldest first.</summary>
+    public IReadOnlyList<Vod> VodsOf(Playthrough playthrough) => Vods.Where(v => playthrough.Has(v.Date)).ToList();
+
+    /// <summary>Oldest first.</summary>
+    public IReadOnlyList<MissingVod> MissingVodsOf(Playthrough playthrough) => MissingVods.Where(m => playthrough.Has(m.Date)).ToList();
+
+    /// <summary>The playthrough of a line in the finished list.</summary>
+    public Playthrough PlaythroughOf(FinishedGame finish) => Playthroughs.First(p => ReferenceEquals(p.Finish, finish));
 
     /// <summary>What happened in the VOD: the credits or 100%. Only the game's last VOD on such a day counts.</summary>
     public Milestone MilestonesOf(Vod vod) => Vods.LastOrDefault(v => v.Date == vod.Date) == vod ? MilestonesOn(vod.Date) : Milestone.None;
@@ -94,18 +124,18 @@ public sealed class Game
     {
         var games = new List<Game>();
         foreach (var finishes in data.FinishedGames.GroupBy(g => Names.Key(g.Name)))
-            games.Add(Create(finishes.Key, finishes.First().Name, finishes.ToList(), data.Games.GetValueOrDefault(finishes.Key), games.Count));
+            games.Add(Create(finishes.Key, finishes.First().Name, finishes.ToList(), data.Games.GetValueOrDefault(finishes.Key), data, games.Count));
 
         var finished = games.Select(g => g.Key).ToHashSet();
         foreach (var (key, info) in data.Games)
         {
             if (!finished.Contains(key))
-                games.Add(Create(key, info.Name, [], info, games.Count));
+                games.Add(Create(key, info.Name, [], info, data, games.Count));
         }
         return games;
     }
 
-    private static Game Create(string key, string name, IReadOnlyList<FinishedGame> finishes, GameInfo? info, int index) => new()
+    private static Game Create(string key, string name, IReadOnlyList<FinishedGame> finishes, GameInfo? info, DataFiles data, int index) => new()
     {
         Key = key,
         Name = name,
@@ -115,6 +145,7 @@ public sealed class Game
         Multiplayer = info?.Multiplayer ?? false,
         Hidden = info?.Hidden ?? false,
         Category = info?.Category ?? false,
+        Playthroughs = Playthrough.Of(finishes, info, data.CoopPartners),
     };
 
     /// <summary>Every name has Latin letters or digits so far. The fallback keeps a page if one doesn't.</summary>

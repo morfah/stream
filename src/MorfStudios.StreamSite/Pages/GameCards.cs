@@ -1,4 +1,6 @@
+using MorfStudios.StreamSite.Data;
 using MorfStudios.StreamSite.Games;
+using MorfStudios.StreamSite.Vods;
 using static MorfStudios.StreamSite.Pages.Html;
 
 namespace MorfStudios.StreamSite.Pages;
@@ -32,9 +34,18 @@ public static class GameCards
             """;
     }
 
+    /// <summary>On the cover of a game I played with others.</summary>
+    public const string CoopBadge = """<span class="badge">Co-op</span>""";
+
+    /// <summary>"Co-op with Nyakuzaa", or "Co-op with franticalle and Nyakuzaa". Null when I played alone.</summary>
+    public static string? CoopNote(IReadOnlyCollection<string> names) => names.Count > 0 ? $"Co-op with {And(names.Select(E))}" : null;
+
     /// <summary>"3 VODs", or a sad face when they're all lost.</summary>
-    public static string VodsNote(Game game) =>
-        game.Vods.Count > 0 ? Plural(game.Vods.Count, "VOD") : game.MissingVods.Count > 0 ? "VOD missing 😢" : "No VODs";
+    public static string VodsNote(Game game) => VodsNote(game.Vods, game.MissingVods);
+
+    /// <summary>The same for some of the game's VODs, like one playthrough's.</summary>
+    public static string VodsNote(IReadOnlyCollection<Vod> vods, IReadOnlyCollection<MissingVod> missing) =>
+        vods.Count > 0 ? Plural(vods.Count, "VOD") : missing.Count > 0 ? "VOD missing 😢" : "No VODs";
 
     /// <summary>The bar under the hero: links to the years, then the filters and search.</summary>
     /// <param name="chips">Filter buttons before the search, as HTML lines. Empty for none.</param>

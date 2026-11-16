@@ -1,0 +1,10 @@
+// The people I play co-op with. "coop" in data/finished-games.json and data/games.json names them as "name" does here.
+// "twitch" is their Twitch name, when they have a channel, and the site links to it.
+[
+  { "name": "TheSoapThatCan", "twitch": "TheSoapThatCan" },
+  { "name": "Nyakuzaa", "twitch": "Nyakuzaa" },
+  { "name": "franticalle", "twitch": "franticalle" },
+  { "name": "Cellsplitter", "twitch": "Cellsplitter" },
+  { "name": "Atahree" },
+  { "name": "Drast0n" }
+]

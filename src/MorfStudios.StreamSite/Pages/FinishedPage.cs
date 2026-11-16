@@ -52,21 +52,22 @@ public static class FinishedPage
         return Layout.Page(page, body.ToString());
     }
 
-    /// <param name="game">One finish. A game finished twice has a card for each.</param>
+    /// <param name="game">One finish. A game finished twice has a card for each, which counts that playthrough's VODs.</param>
     /// <param name="page">The game's page, with its cover and VODs.</param>
     private static string Card(FinishedGame game, Game page)
     {
+        var playthrough = page.PlaythroughOf(game);
         var badges = string.Concat(
             game.HundredPercent is { } hundred ? $"""<span class="badge gold" title="100% on {hundred.ToString("d MMM yyyy", CultureInfo.InvariantCulture)}">🏆 100%</span>""" : "",
-            game.Coop is not null ? """<span class="badge">Co-op</span>""" : "",
+            game.Coop.Count > 0 ? GameCards.CoopBadge : "",
             game.Difficulty is not null ? $"""<span class="badge" title="{E(game.Difficulty)} difficulty">💀</span>""" : "");
         var notes = new[]
         {
-            GameCards.VodsNote(page),
-            game.Coop is { } coop ? $"Co-op with {E(coop)}" : null,
+            GameCards.VodsNote(page.VodsOf(playthrough), page.MissingVodsOf(playthrough)),
+            GameCards.CoopNote(game.Coop),
             game.Difficulty is { } difficulty ? $"{E(difficulty)} difficulty" : null,
         };
-        var flags = (game.HundredPercent is not null ? " data-hundred" : "") + (game.Coop is not null ? " data-coop" : "");
+        var flags = (game.HundredPercent is not null ? " data-hundred" : "") + (game.Coop.Count > 0 ? " data-coop" : "");
         return GameCards.Card(game.Name, page, badges, notes, flags);
     }
 }
