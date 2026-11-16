@@ -41,6 +41,9 @@ public sealed class Game
     /// <summary>Marked <c>category</c> in <c>data/games.json</c>: a kind of stream, like IRL, not a game.</summary>
     public bool Category { get; init; }
 
+    /// <summary>My rating, 1 to 5 stars, from <c>data/games.json</c>. Null when I haven't rated it.</summary>
+    public int? Rating { get; init; }
+
     /// <summary>
     /// Oldest first: one for each line in the finished list, and one I haven't finished, for a game I haven't finished or
     /// one I'm playing again, like Valheim co-op. A game found in the VOD titles is one playthrough I haven't finished.
@@ -145,6 +148,7 @@ public sealed class Game
         Multiplayer = info?.Multiplayer ?? false,
         Hidden = info?.Hidden ?? false,
         Category = info?.Category ?? false,
+        Rating = info?.Rating,
         Playthroughs = Playthrough.Of(finishes, info, data.CoopPartners),
     };
 

@@ -240,6 +240,22 @@ img { display: block; max-width: 100%; }
 }
 .badge.gold { background: linear-gradient(115deg, #ffe066, #ffb02e); color: #2a1600; border-color: transparent; }
 
+/* My rating: gold stars, with the ones I didn't give dimmed. On a cover, in its top corner, like the badges at the bottom. */
+.rating { color: var(--yellow); letter-spacing: 1px; white-space: nowrap; }
+.rating .off { color: rgb(255 255 255 / 0.28); }
+.cover > .rating {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  font-size: 12px;
+  line-height: 1;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgb(12 10 16 / 0.82);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgb(255 255 255 / 0.14);
+}
+
 .card h3 {
   margin: 10px 2px 0;
   font-size: 15px;
@@ -465,6 +481,7 @@ body:has(.player-dialog[open]) { overflow: hidden; }
   .card h3 { font-size: 13px; }
   .card .note { font-size: 12px; }
   .badge { font-size: 10px; padding: 4px 6px; }
+  .cover > .rating { left: 6px; top: 6px; font-size: 10px; padding: 3px 5px; letter-spacing: 0; }
   .cover.no-art { padding: 10px; }
   .cover.no-art span { font-size: 14px; }
   .game-hero { padding-top: 24px; }

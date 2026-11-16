@@ -10,5 +10,8 @@ obj/
 # My keys for builds on my PC. GitHub Actions gets them from the repo secrets.
 keys.local.json
 
+# My Grouvee export, with my account's details. The ratings from it are copied into data/games.json.
+data/grouvee_export*.json
+
 # Claude Code's local preview settings
 .claude/

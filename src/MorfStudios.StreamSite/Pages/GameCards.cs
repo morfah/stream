@@ -19,6 +19,7 @@ public static class GameCards
         var art = cover is null
             ? $"<span>{E(name)}</span>"
             : $"""<img src="{E(cover)}" alt="" loading="lazy" width="{Twitch.CoverFinder.Width}" height="{Twitch.CoverFinder.Height}">""";
+        var stars = game.Rating is { } rating ? Stars(rating) : "";
         var badgeList = badges.Length > 0 ? $"""<div class="badges">{badges}</div>""" : "";
         var text = string.Join(" · ", notes.OfType<string>());
         var note = text.Length > 0 ? $"""{"\n"}            <p class="note">{text}</p>""" : "";
@@ -26,13 +27,18 @@ public static class GameCards
         return $"""
                       <li class="card" data-name="{E(Names.Key(name))}"{flags}>
                         <a href="{E(game.Path)}">
-                          <div class="cover{(cover is null ? " no-art" : "")}">{art}{badgeList}</div>
+                          <div class="cover{(cover is null ? " no-art" : "")}">{art}{stars}{badgeList}</div>
                           <h3>{E(name)}</h3>{note}
                         </a>
                       </li>
 
             """;
     }
+
+    /// <summary>My rating as gold stars, like ★★★★☆, which a screen reader reads as "4 out of 5 stars".</summary>
+    /// <param name="rating">1 to 5, as the files check when they load.</param>
+    public static string Stars(int rating) =>
+        $"""<span class="rating" role="img" aria-label="{rating} out of {GameInfo.MaxRating} stars" title="My rating: {rating} out of {GameInfo.MaxRating}">{new string('★', rating)}<span class="off">{new string('★', GameInfo.MaxRating - rating)}</span></span>""";
 
     /// <summary>On the cover of a game I played with others.</summary>
     public const string CoopBadge = """<span class="badge">Co-op</span>""";

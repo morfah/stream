@@ -24,6 +24,15 @@ public sealed record GameInfo
     /// </summary>
     public bool Category { get; init; }
 
+    public const int MinRating = 1;
+    public const int MaxRating = 5;
+
+    /// <summary>
+    /// My rating, 1 to 5 stars, like on Grouvee, where I've rated the games I play since before I started streaming.
+    /// The stars are on the game's cover and its page.
+    /// </summary>
+    public int? Rating { get; init; }
+
     /// <summary>
     /// Who I played the playthrough I haven't finished with, like <c>coop</c> in the finished list. For a finished game,
     /// that's one after the finish, like Valheim co-op after my solo one, so it needs <see cref="Started"/>. The finished
