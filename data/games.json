@@ -25,6 +25,8 @@
   { "name": "Warhammer: Vermintide 2", "aliases": ["Vermintide 2"], "rating": 4 },
   { "name": "A Hat in Time", "aliases": ["Hat in Time"], "rating": 4 },
   { "name": "Little Nightmares - Secrets of The Maw", "twitch": "Little Nightmares", "aliases": ["Little Nightmares [DLC]"] },
+  // A collection, finished one game at a time: each is a playthrough with its name in "playthrough" in the finished list.
+  { "name": "Mass Effect Legendary Edition", "aliases": ["Mass Effect", "Mass Effect 2"] },
 
   // Played, not finished. Most of those games are found in the VOD titles by themselves. These need help.
   { "name": "L.A. Noire", "twitchId": "19589" },

@@ -16,6 +16,13 @@ public sealed record FinishedGame
     /// </summary>
     public DateOnly? Started { get; init; }
 
+    /// <summary>
+    /// The playthrough's name, for a collection I play one game at a time, like "Mass Effect 2" in Mass Effect Legendary
+    /// Edition. It's the playthrough's heading on the game's page, and on its card on Finished.
+    /// </summary>
+    [JsonPropertyName("playthrough")]
+    public string? PlaythroughName { get; init; }
+
     /// <summary>The day I got every achievement or trophy, if I did. The same day as <see cref="Date"/> or later.</summary>
     public DateOnly? HundredPercent { get; init; }
 

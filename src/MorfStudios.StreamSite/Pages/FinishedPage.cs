@@ -63,11 +63,12 @@ public static class FinishedPage
             game.Difficulty is not null ? $"""<span class="badge" title="{E(game.Difficulty)} difficulty">💀</span>""" : "");
         var notes = new[]
         {
+            game.PlaythroughName is { } name ? E(name) : null,
             GameCards.VodsNote(page.VodsOf(playthrough), page.MissingVodsOf(playthrough)),
             GameCards.CoopNote(game.Coop),
             game.Difficulty is { } difficulty ? $"{E(difficulty)} difficulty" : null,
         };
         var flags = (game.HundredPercent is not null ? " data-hundred" : "") + (game.Coop.Count > 0 ? " data-coop" : "");
-        return GameCards.Card(game.Name, page, badges, notes, flags);
+        return GameCards.Card(game.Name, page, badges, notes, flags, alsoFoundBy: game.PlaythroughName);
     }
 }

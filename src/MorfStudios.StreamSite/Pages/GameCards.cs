@@ -13,7 +13,8 @@ public static class GameCards
     /// <param name="badges">HTML, like <c>&lt;span class="badge"&gt;Co-op&lt;/span&gt;</c>.</param>
     /// <param name="notes">HTML, joined with dots under the name.</param>
     /// <param name="flags">Attributes for the filters, like <c> data-coop</c>.</param>
-    public static string Card(string name, Game game, string badges, IEnumerable<string?> notes, string flags = "")
+    /// <param name="alsoFoundBy">More words the search finds the card by, like the playthrough's name "Mass Effect 2".</param>
+    public static string Card(string name, Game game, string badges, IEnumerable<string?> notes, string flags = "", string? alsoFoundBy = null)
     {
         var cover = game.Cover?.Small;
         var art = cover is null
@@ -25,7 +26,7 @@ public static class GameCards
         var note = text.Length > 0 ? $"""{"\n"}            <p class="note">{text}</p>""" : "";
 
         return $"""
-                      <li class="card" data-name="{E(Names.Key(name))}"{flags}>
+                      <li class="card" data-name="{E(Names.Key($"{name} {alsoFoundBy}"))}"{flags}>
                         <a href="{E(game.Path)}">
                           <div class="cover{(cover is null ? " no-art" : "")}">{art}{stars}{badgeList}</div>
                           <h3>{E(name)}</h3>{note}

@@ -8,7 +8,7 @@ A C# program builds the pages from the files in `data`, my VODs on YouTube and g
 
 Edit these by hand, on GitHub or on my PC. A mistake in a file stops the build and the Actions run says where, so the live site stays as it was.
 
-- `data/finished-games.json`: the games I've finished. `date` is the day I got the credits, and `hundredPercent` the day I got every achievement or trophy, if I did. `coop` is who I played it with: one name, or a list for a party, like `["franticalle", "Nyakuzaa"]`. One line per playthrough, so a game finished twice with different friends has two lines, and `started` can say when the second one started (see [Playthroughs](#playthroughs)). The site sorts them by date, newest first, so a new line can go anywhere in the file:
+- `data/finished-games.json`: the games I've finished. `date` is the day I got the credits, and `hundredPercent` the day I got every achievement or trophy, if I did. `coop` is who I played it with: one name, or a list for a party, like `["franticalle", "Nyakuzaa"]`. One line per playthrough, so a game finished twice with different friends has two lines, `started` can say when the second one started, and `playthrough` can name it (see [Playthroughs](#playthroughs)). The site sorts them by date, newest first, so a new line can go anywhere in the file:
   ```json
   { "date": "2025-10-14", "name": "Hollow Knight: Silksong" },
   { "date": "2024-01-25", "name": "Resident Evil 6", "coop": "franticalle" },
@@ -79,6 +79,18 @@ Each line in the finished list is a playthrough, and so is a game I haven't fini
 Valheim's page then has the solo playthrough's VODs, then the co-op one's. It's on Finished for the solo one and on Unfinished for the co-op one, whose card counts only its VODs. With `"multiplayer": true`, it's on Multiplayer instead of Unfinished.
 
 The VODs are split by day: a playthrough has them from its start until the next one starts, so VODs after the credits, like Valheim's exploring, stay with it. A finished playthrough starts on its `started` day, otherwise the day after the one before it finished, like We Were Here Forever's second one.
+
+A collection I finish one game at a time, like Mass Effect Legendary Edition, has a line for each game, with its name in `playthrough`. That's the playthrough's heading on the game's page instead of "Solo playthrough", and it's on the game's card on Finished, where the search finds it:
+
+```json
+// data/finished-games.json
+{ "date": "2023-02-16", "name": "Mass Effect Legendary Edition", "playthrough": "Mass Effect 2" },
+{ "date": "2022-01-28", "name": "Mass Effect Legendary Edition", "playthrough": "Mass Effect" },
+// data/games.json
+{ "name": "Mass Effect Legendary Edition", "aliases": ["Mass Effect", "Mass Effect 2"] },
+```
+
+The `aliases` put VODs like `Mass Effect 2 - 2023-02-09` on the collection's page.
 
 ## Unfinished and multiplayer games
 

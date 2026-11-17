@@ -12,6 +12,9 @@ public sealed class Playthrough
     /// <summary>The finished list's line, or null for the playthrough I haven't finished.</summary>
     public FinishedGame? Finish { get; init; }
 
+    /// <summary>Like "Mass Effect 2" in Mass Effect Legendary Edition, from the finished list. Null for most.</summary>
+    public string? Name => Finish?.PlaythroughName;
+
     /// <summary>Who I played it with. Empty when I played alone.</summary>
     public required IReadOnlyList<CoopPartner> Coop { get; init; }
 

@@ -73,8 +73,12 @@ public static class GamePage
             foreach (var playthrough in game.Playthroughs)
             {
                 var (vods, missing) = (game.VodsOf(playthrough), game.MissingVodsOf(playthrough));
+                // A named one, like Mass Effect 2, has who I played it with under its name.
+                var (title, who) = playthrough.Name is { } name
+                    ? (E(name), playthrough.Coop.Count > 0 ? $"{Who(playthrough)} · " : "")
+                    : (Who(playthrough), "");
                 body.Append($"""
-                          <div class="playthrough-head"><h3>{Who(playthrough)}</h3><span>{Outcome(playthrough)} · {GameCards.VodsNote(vods, missing)}</span></div>
+                          <div class="playthrough-head"><h3>{title}</h3><span>{who}{Outcome(playthrough)} · {GameCards.VodsNote(vods, missing)}</span></div>
 
                     """);
                 body.Append(VodList(game, vods, missing, "No VODs of this playthrough."));
