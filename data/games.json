@@ -17,7 +17,7 @@
   { "name": "Crash Bandicoot N. Sane Trilogy", "cover": "data/covers/crash-bandicoot-n-sane-trilogy.jpg", "rating": 4 },
   { "name": "Fall Guys: Ultimate Knockout", "twitch": "Fall Guys", "aliases": ["Fall Guys"], "multiplayer": true, "rating": 4 },
   { "name": "Sonic Mania - Encore DLC", "twitch": "Sonic Mania", "rating": 4 },
-  { "name": "Doom Eternal: The Ancient Gods - Part One", "twitch": "DOOM Eternal" },
+  { "name": "Doom Eternal: The Ancient Gods - Part One", "twitch": "DOOM Eternal", "rating": 4 },
   { "name": "Five Nights at Freddy's 4: The Final Chapter", "twitchId": "489567", "aliases": ["Five Nights at Freddy's 4"], "rating": 3 },
   { "name": "Five Nights at Freddy's 3", "aliases": ["FNAF 3", "FNAF3"], "rating": 3 },
   { "name": "Five Nights at Freddy's", "twitchId": "418063", "aliases": ["FNAF 1", "FNAF 4/20"], "rating": 3 },
@@ -27,6 +27,8 @@
   { "name": "Little Nightmares - Secrets of The Maw", "twitch": "Little Nightmares", "aliases": ["Little Nightmares [DLC]"] },
   // A collection, finished one game at a time: each is a playthrough with its name in "playthrough" in the finished list.
   { "name": "Mass Effect Legendary Edition", "aliases": ["Mass Effect", "Mass Effect 2"] },
+  // The fan-made fixes for the PC version. Twitch has no category for it, so the cover is IGDB's.
+  { "name": "Silent Hill 2: Enhanced Edition", "cover": "data/covers/silent-hill-2-enhanced-edition.jpg", "aliases": ["Silent Hill 2"], "rating": 4 },
 
   // Played, not finished. Most of those games are found in the VOD titles by themselves. These need help.
   { "name": "L.A. Noire", "twitchId": "19589" },
@@ -110,6 +112,7 @@
   { "name": "If On A Winter's Night, Four Travelers", "rating": 5 },
   { "name": "In Sound Mind", "rating": 3 },
   { "name": "Inunaki Tunnel | 犬鳴トンネル", "rating": 2 },
+  { "name": "JOLLY", "rating": 2 },
   { "name": "Katamari Damacy REROLL", "rating": 4 },
   { "name": "Kill to Collect", "rating": 2 },
   { "name": "LEGO Builder’s Journey", "rating": 3 },
@@ -144,7 +147,6 @@
   { "name": "Sayonara Wild Hearts", "rating": 4 },
   { "name": "Scorn", "rating": 3 },
   { "name": "Silent Hill", "rating": 3 },
-  { "name": "Silent Hill 2", "rating": 4 },
   { "name": "Slime Rancher", "rating": 3 },
   { "name": "Sonic Mania", "rating": 4 },
   { "name": "Split Fiction", "rating": 5 },
