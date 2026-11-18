@@ -239,6 +239,8 @@ img { display: block; max-width: 100%; }
   white-space: nowrap;
 }
 .badge.gold { background: linear-gradient(115deg, #ffe066, #ffb02e); color: #2a1600; border-color: transparent; }
+/* DLC or Mod: light, so it doesn't look like the badges for how I played it. */
+.badge.kind { background: rgb(245 240 248 / 0.92); color: var(--bg); border-color: transparent; }
 
 /* My rating: gold stars, with the ones I didn't give dimmed. On a cover, in its top corner, like the badges at the bottom. */
 .rating { color: var(--yellow); letter-spacing: 1px; white-space: nowrap; }

@@ -21,12 +21,16 @@ public static class GameCards
             ? $"<span>{E(name)}</span>"
             : $"""<img src="{E(cover)}" alt="" loading="lazy" width="{Twitch.CoverFinder.Width}" height="{Twitch.CoverFinder.Height}">""";
         var stars = game.Rating is { } rating ? Stars(rating) : "";
+        // DLC or Mod first, since it's about the game, and the others about how I played it.
+        badges = KindBadge(game) + badges;
         var badgeList = badges.Length > 0 ? $"""<div class="badges">{badges}</div>""" : "";
         var text = string.Join(" · ", notes.OfType<string>());
         var note = text.Length > 0 ? $"""{"\n"}            <p class="note">{text}</p>""" : "";
+        // So "dlc" or "mod" in the search finds them by their badge.
+        var kind = game.Dlc ? "dlc" : game.Mod ? "mod" : null;
 
         return $"""
-                      <li class="card" data-name="{E(Names.Key($"{name} {alsoFoundBy}"))}"{flags}>
+                      <li class="card" data-name="{E(Names.Key($"{name} {alsoFoundBy} {kind}"))}"{flags}>
                         <a href="{E(game.Path)}">
                           <div class="cover{(cover is null ? " no-art" : "")}">{art}{stars}{badgeList}</div>
                           <h3>{E(name)}</h3>{note}
@@ -40,6 +44,12 @@ public static class GameCards
     /// <param name="rating">1 to 5, as the files check when they load.</param>
     public static string Stars(int rating) =>
         $"""<span class="rating" role="img" aria-label="{rating} out of {GameInfo.MaxRating} stars" title="My rating: {rating} out of {GameInfo.MaxRating}">{new string('★', rating)}<span class="off">{new string('★', GameInfo.MaxRating - rating)}</span></span>""";
+
+    /// <summary>"DLC" for an add-on to another game, "Mod" for a game changed by fans, otherwise nothing.</summary>
+    public static string KindBadge(Game game) =>
+        game.Dlc ? """<span class="badge kind" title="Downloadable content: an add-on to another game">DLC</span>"""
+        : game.Mod ? """<span class="badge kind" title="A mod: the game changed by fans">Mod</span>"""
+        : "";
 
     /// <summary>On the cover of a game I played with others.</summary>
     public const string CoopBadge = """<span class="badge">Co-op</span>""";

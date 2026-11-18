@@ -41,6 +41,12 @@ public sealed class Game
     /// <summary>Marked <c>category</c> in <c>data/games.json</c>: a kind of stream, like IRL, not a game.</summary>
     public bool Category { get; init; }
 
+    /// <summary>Marked <c>dlc</c> in <c>data/games.json</c>: an add-on to another game, like The Frozen Wilds.</summary>
+    public bool Dlc { get; init; }
+
+    /// <summary>Marked <c>mod</c> in <c>data/games.json</c>: a game changed by fans, like Silent Hill 2: Enhanced Edition.</summary>
+    public bool Mod { get; init; }
+
     /// <summary>My rating, 1 to 5 stars, from <c>data/games.json</c>. Null when I haven't rated it.</summary>
     public int? Rating { get; init; }
 
@@ -148,6 +154,8 @@ public sealed class Game
         Multiplayer = info?.Multiplayer ?? false,
         Hidden = info?.Hidden ?? false,
         Category = info?.Category ?? false,
+        Dlc = info?.Dlc ?? false,
+        Mod = info?.Mod ?? false,
         Rating = info?.Rating,
         Playthroughs = Playthrough.Of(finishes, info, data.CoopPartners),
     };

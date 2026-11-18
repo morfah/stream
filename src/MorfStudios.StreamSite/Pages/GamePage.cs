@@ -164,6 +164,7 @@ public static class GamePage
         And(days.Distinct().Order().Select(d => d.ToString("d MMM yyyy", CultureInfo.InvariantCulture)));
 
     private static string Badges(Game game) => string.Concat(
+        GameCards.KindBadge(game),
         game.Rating is { } rating ? $"""<span class="badge rating-badge">My rating {GameCards.Stars(rating)}</span>""" : "",
         game.Finishes.Any(f => f.HundredPercent is not null) ? """<span class="badge gold">🏆 100%</span>""" : "",
         game.Coop.Count > 0 ? $"""<span class="badge coop">Co-op with {And(game.Coop.Select(Partner))}</span>""" : "",

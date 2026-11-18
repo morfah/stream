@@ -1,10 +1,10 @@
 [
   { "name": "Hollow Knight: Silksong", "aliases": ["Silksong"], "rating": 5 },
   { "name": "Max Payne 2: The Fall of Max Payne", "aliases": ["Max Payne 2"], "rating": 4 },
-  { "name": "The Evil Within: The Executioner", "twitch": "The Evil Within", "rating": 2 },
-  { "name": "The Evil Within: The Consequence", "twitch": "The Evil Within", "rating": 3 },
-  { "name": "The Evil Within: The Assignment", "twitch": "The Evil Within", "rating": 3 },
-  { "name": "Horizon Zero Dawn - The Frozen Wilds DLC", "twitch": "Horizon Zero Dawn", "rating": 3 },
+  { "name": "The Evil Within: The Executioner", "twitch": "The Evil Within", "dlc": true, "rating": 2 },
+  { "name": "The Evil Within: The Consequence", "twitch": "The Evil Within", "dlc": true, "rating": 3 },
+  { "name": "The Evil Within: The Assignment", "twitch": "The Evil Within", "dlc": true, "rating": 3 },
+  { "name": "Horizon Zero Dawn: The Frozen Wilds", "twitch": "Horizon Zero Dawn", "dlc": true, "rating": 3 },
   { "name": "Astro's Playground", "twitch": "Astro's Playroom", "aliases": ["Astro's Playroom"], "rating": 3 },
   { "name": "A Plague Tale: Innocence", "aliases": ["A Plague Tale"], "rating": 4 },
   { "name": "Five Nights at Freddy's: Security Breach", "aliases": ["FNAF: Security Breach"], "rating": 2 },
@@ -16,19 +16,21 @@
   { "name": "Spyro Reignited Trilogy", "cover": "data/covers/spyro-reignited-trilogy.jpg", "aliases": ["Spyro the Dragon: Reignited Trilogy"], "rating": 4 },
   { "name": "Crash Bandicoot N. Sane Trilogy", "cover": "data/covers/crash-bandicoot-n-sane-trilogy.jpg", "rating": 4 },
   { "name": "Fall Guys: Ultimate Knockout", "twitch": "Fall Guys", "aliases": ["Fall Guys"], "multiplayer": true, "rating": 4 },
-  { "name": "Sonic Mania - Encore DLC", "twitch": "Sonic Mania", "rating": 4 },
-  { "name": "Doom Eternal: The Ancient Gods - Part One", "twitch": "DOOM Eternal", "rating": 4 },
+  { "name": "Sonic Mania: Encore", "twitch": "Sonic Mania", "dlc": true, "rating": 4 },
+  { "name": "Doom Eternal: The Ancient Gods - Part One", "twitch": "DOOM Eternal", "dlc": true, "rating": 4 },
   { "name": "Five Nights at Freddy's 4: The Final Chapter", "twitchId": "489567", "aliases": ["Five Nights at Freddy's 4"], "rating": 3 },
   { "name": "Five Nights at Freddy's 3", "aliases": ["FNAF 3", "FNAF3"], "rating": 3 },
   { "name": "Five Nights at Freddy's", "twitchId": "418063", "aliases": ["FNAF 1", "FNAF 4/20"], "rating": 3 },
   { "name": "StarCraft II: Legacy of the Void", "twitch": "StarCraft II", "rating": 4 },
   { "name": "Warhammer: Vermintide 2", "aliases": ["Vermintide 2"], "rating": 4 },
   { "name": "A Hat in Time", "aliases": ["Hat in Time"], "rating": 4 },
-  { "name": "Little Nightmares - Secrets of The Maw", "twitch": "Little Nightmares", "aliases": ["Little Nightmares [DLC]"] },
+  { "name": "Little Nightmares - Secrets of The Maw", "twitch": "Little Nightmares", "aliases": ["Little Nightmares [DLC]"], "dlc": true },
   // A collection, finished one game at a time: each is a playthrough with its name in "playthrough" in the finished list.
   { "name": "Mass Effect Legendary Edition", "aliases": ["Mass Effect", "Mass Effect 2"] },
   // The fan-made fixes for the PC version. Twitch has no category for it, so the cover is IGDB's.
-  { "name": "Silent Hill 2: Enhanced Edition", "cover": "data/covers/silent-hill-2-enhanced-edition.jpg", "aliases": ["Silent Hill 2"], "rating": 4 },
+  { "name": "Silent Hill 2: Enhanced Edition", "cover": "data/covers/silent-hill-2-enhanced-edition.jpg", "aliases": ["Silent Hill 2"], "mod": true, "rating": 4 },
+  // The original, played with the fan-made HD textures, like the VOD titles say: "Resident Evil 4 HD MOD 1.0".
+  { "name": "Resident Evil 4", "mod": true, "rating": 4 },
 
   // Played, not finished. Most of those games are found in the VOD titles by themselves. These need help.
   { "name": "L.A. Noire", "twitchId": "19589" },
@@ -137,7 +139,6 @@
   { "name": "Quake", "rating": 4 },
   { "name": "Refunct", "rating": 3 },
   { "name": "Resident Evil 3", "rating": 4 },
-  { "name": "Resident Evil 4", "rating": 4 },
   { "name": "Resident Evil 5", "rating": 3 },
   { "name": "Resident Evil 6", "rating": 3 },
   { "name": "Risk of Rain 2", "rating": 4 },

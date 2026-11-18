@@ -97,6 +97,8 @@ public sealed partial class DataFiles
                 throw new DataException($"data/games.json: {game.Name} has started on {started:yyyy-MM-dd}, which can't be right.");
             if (game.Rating is { } rating and not (>= GameInfo.MinRating and <= GameInfo.MaxRating))
                 throw new DataException($"data/games.json: {game.Name} has the rating {rating}. It should be {GameInfo.MinRating} to {GameInfo.MaxRating} stars.");
+            if (game.Dlc && game.Mod)
+                throw new DataException($"data/games.json: {game.Name} is marked both dlc and mod. It can only be one of them.");
             if (!byName.TryAdd(Names.Key(game.Name), game))
                 throw new DataException($"data/games.json: {game.Name} is in the file twice.");
         }

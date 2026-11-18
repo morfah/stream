@@ -15,7 +15,7 @@ Edit these by hand, on GitHub or on my PC. A mistake in a file stops the build a
   { "date": "2022-12-03", "name": "God of War Ragnarök", "hundredPercent": "2023-01-28", "difficulty": "Hardest" },
   ```
   On the game's page and in the VOD archive, its last VOD on each of those days gets a 🏁 Finished or 🏆 100% badge. The dates before November 2026 were guessed from the VOD titles (FINALE, THE END, Credits, 100%, Platinum), otherwise the game's last VOD that year, and then checked by hand.
-- `data/games.json`: only for games that need help finding their cover or their VODs, that are multiplayer, co-op or hidden, or that I've rated. A game here that isn't finished is on Unfinished or Multiplayer once a VOD title names it.
+- `data/games.json`: only for games that need help finding their cover or their VODs, that are multiplayer, co-op, a DLC, a mod or hidden, or that I've rated. A game here that isn't finished is on Unfinished or Multiplayer once a VOD title names it.
   - `twitch`: the Twitch category's name, when it isn't the game's name.
   - `twitchId`: the Twitch category's ID, when several share a name, like an old game and its remake.
   - `cover`: my own picture in the repo, like `data/covers/game.jpg`, when Twitch has none.
@@ -24,6 +24,7 @@ Edit these by hand, on GitHub or on my PC. A mistake in a file stops the build a
   - `coop`: who I played the playthrough I haven't finished with, like in the finished list: `"Nyakuzaa"` for DEVOUR, or everyone from every stream, like `["franticalle", "Nyakuzaa", "Atahree", "Drast0n"]` for Phasmophobia. For a finished game, that's a playthrough after the finish, like Valheim co-op after my solo one, so it needs `started`. The finished playthroughs' partners go on their lines in the finished list.
   - `started`: for a finished game, the day a playthrough I haven't finished started, like `"2022-02-16"` for Valheim co-op. It adds that playthrough to the game.
   - `rating`: my rating, 1 to 5 stars, like `4`. The stars are on the game's cover on Finished, Unfinished and Multiplayer, and on its page as "My rating". The ratings came from my [Grouvee](https://www.grouvee.com/) export in November 2026, by name and by the version my VODs show, like Tomb Raider 1 and the Resident Evil 2 remake. A game I rate later gets its `rating` by hand. The export, `data/grouvee_export.json`, has my account's details, so git ignores it.
+  - `dlc`: `true` for an add-on to another game, like Horizon Zero Dawn's The Frozen Wilds. `mod`: `true` for a game changed by fans, like Silent Hill 2: Enhanced Edition. Either one, not both. It's a DLC or Mod badge on the game's cover and page, and "dlc" or "mod" in the search finds it.
   - `hidden`: `true` for a game I don't want listed. It's not on Unfinished or Multiplayer and has no page, but its VODs stay in the archive.
   - `category`: `true` for a kind of stream that isn't a game, like `Software and Game Development` or `IRL`. It has a page like a game, listed on Other instead of Unfinished. Its VODs come from `data/vod-fixes.json` or other names.
 - `data/coop-partners.json`: everyone I play co-op with. `coop` in the other files names them as `name` does here, so a misspelled name stops the build. `twitch` is their Twitch name, when they have a channel, and the site links to it:

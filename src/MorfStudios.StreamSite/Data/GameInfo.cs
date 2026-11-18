@@ -24,6 +24,12 @@ public sealed record GameInfo
     /// </summary>
     public bool Category { get; init; }
 
+    /// <summary>An add-on to another game, like Horizon Zero Dawn's The Frozen Wilds. It has a DLC badge on its cover and page.</summary>
+    public bool Dlc { get; init; }
+
+    /// <summary>A game changed by fans, like Silent Hill 2: Enhanced Edition. It has a Mod badge on its cover and page.</summary>
+    public bool Mod { get; init; }
+
     public const int MinRating = 1;
     public const int MaxRating = 5;
 
